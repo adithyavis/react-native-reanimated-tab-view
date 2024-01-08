@@ -23,4 +23,12 @@ module.exports = {
     'react/no-string-refs': 0, // string refs are checked at runtime,
     'react/no-unstable-nested-components': 0, // disable prevention of defining components during render
   },
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
 };
