@@ -163,5 +163,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "react-native-reanimated": "^3.6.1"
   }
 }
