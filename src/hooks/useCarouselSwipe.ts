@@ -9,6 +9,7 @@ import {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import { AUTO_SWIPE_COMPLETION_DURATION } from '../constants/carousel';
+import { useCarouselRouteIndices } from './useCarousel';
 
 const ACTIVE_OFFSET_X = [-10, 10];
 
@@ -24,8 +25,10 @@ export const useCarouselSwipePanGesture = (
 ) => {
   const preSwipeStartSwipeTranslationX = useSharedValue(0);
 
-  const minRouteIndex = 0;
-  const maxRouteIndex = noOfRoutes - 1;
+  const { minRouteIndex, maxRouteIndex } = useCarouselRouteIndices(
+    currentRouteIndex,
+    noOfRoutes
+  );
   const minSwipeTranslationX = minRouteIndex * sceneContainerWidth;
   const maxSwipeTranslationX = maxRouteIndex * sceneContainerWidth;
 

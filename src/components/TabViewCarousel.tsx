@@ -8,6 +8,7 @@ import {
   useCarouselSwipePanGesture,
   useCarouselSwipeTranslationAnimatedStyle,
 } from '../hooks/useCarouselSwipe';
+import { useCarouselRouteIndices } from '../hooks/useCarousel';
 
 export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
   const {
@@ -41,14 +42,9 @@ export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
     },
     [currentRouteIndex, onIndexChange]
   );
-  const leftAdjacentRouteIndex = useMemo(
-    () => Math.max(0, currentRouteIndex - 1),
-    [currentRouteIndex]
-  );
-  const rightAdjacentRouteIndex = useMemo(
-    () => Math.min(noOfRoutes - 1, currentRouteIndex + 1),
-    [currentRouteIndex, noOfRoutes]
-  );
+
+  const { smallestRouteIndexToRender, largestRouteIndexToRender } =
+    useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
 
   const swipeTranslationX = useSharedValue(0);
 
@@ -82,7 +78,8 @@ export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
       <View style={[styles.container, style]}>
         {navigationState.routes.map((route, index) => {
           const shouldRender =
-            index >= leftAdjacentRouteIndex && index <= rightAdjacentRouteIndex;
+            index >= smallestRouteIndexToRender &&
+            index <= largestRouteIndexToRender;
           const renderOffset = index * sceneContainerWidth;
           if (!shouldRender) {
             return null;

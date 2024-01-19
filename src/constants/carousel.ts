@@ -1,1 +1,3 @@
 export const AUTO_SWIPE_COMPLETION_DURATION = 200;
+
+export const NUM_NEARBY_ROUTES_TO_RENDER = 1;
