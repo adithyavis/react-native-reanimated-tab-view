@@ -1,109 +1,134 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 import { View } from 'react-native';
 import type { TabViewCarouselProps } from '../types/TabViewCarousel';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
 import {
+  useCarouselJumpToIndex,
   useCarouselSwipePanGesture,
   useCarouselSwipeTranslationAnimatedStyle,
 } from '../hooks/useCarouselSwipe';
 import { useCarouselRouteIndices } from '../hooks/useCarousel';
 
-export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
-  const {
-    navigationState,
-    renderScene,
-    layout,
-    onIndexChange,
-    style,
-    sceneContainerStyle,
-    swipeEnabled = true,
-    onSwipeStart,
-    onSwipeEnd,
-  } = props;
+type CarouselImperativeHandle = {
+  jumpToRoute: (route: string) => void;
+};
 
-  const sceneContainerWidth = useMemo(() => layout.width, [layout.width]);
-  const noOfRoutes = useMemo(
-    () => navigationState.routes.length,
-    [navigationState.routes.length]
-  );
+export const TabViewCarousel = React.memo(
+  forwardRef<CarouselImperativeHandle, TabViewCarouselProps>((props, ref) => {
+    const {
+      navigationState,
+      renderScene,
+      layout,
+      onIndexChange,
+      style,
+      sceneContainerStyle,
+      swipeEnabled = true,
+      onSwipeStart,
+      onSwipeEnd,
+    } = props;
 
-  const [currentRouteIndex, setCurrentRouteIndex] = useState(
-    navigationState.index
-  );
-  const updateCurrentRouteIndex = useCallback(
-    (indexToUpdate: number) => {
-      const prevCurrentRouteIndex = currentRouteIndex;
-      setCurrentRouteIndex(indexToUpdate);
-      if (indexToUpdate !== prevCurrentRouteIndex) {
-        onIndexChange?.(indexToUpdate);
-      }
-    },
-    [currentRouteIndex, onIndexChange]
-  );
+    const sceneContainerWidth = useMemo(() => layout.width, [layout.width]);
+    const noOfRoutes = useMemo(
+      () => navigationState.routes.length,
+      [navigationState.routes.length]
+    );
 
-  const { smallestRouteIndexToRender, largestRouteIndexToRender } =
-    useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
+    const [currentRouteIndex, setCurrentRouteIndex] = useState(
+      navigationState.index
+    );
+    const updateCurrentRouteIndex = useCallback(
+      (indexToUpdate: number) => {
+        const prevCurrentRouteIndex = currentRouteIndex;
+        setCurrentRouteIndex(indexToUpdate);
+        if (indexToUpdate !== prevCurrentRouteIndex) {
+          onIndexChange?.(indexToUpdate);
+        }
+      },
+      [currentRouteIndex, onIndexChange]
+    );
 
-  const swipeTranslationX = useSharedValue(0);
+    const { smallestRouteIndexToRender, largestRouteIndexToRender } =
+      useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
 
-  const handleSwipeStart = useCallback(() => {
-    onSwipeStart?.();
-  }, [onSwipeStart]);
+    const swipeTranslationX = useSharedValue(0);
 
-  const handleSwipeEnd = useCallback(() => {
-    onSwipeEnd?.();
-  }, [onSwipeEnd]);
+    const handleSwipeStart = useCallback(() => {
+      onSwipeStart?.();
+    }, [onSwipeStart]);
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const jumpToRoute = useCallback(() => {}, []);
+    const handleSwipeEnd = useCallback(() => {
+      onSwipeEnd?.();
+    }, [onSwipeEnd]);
 
-  const swipePanGesture = useCarouselSwipePanGesture(
-    currentRouteIndex,
-    swipeTranslationX,
-    updateCurrentRouteIndex,
-    sceneContainerWidth,
-    noOfRoutes,
-    handleSwipeStart,
-    handleSwipeEnd,
-    swipeEnabled
-  );
+    const jumpToRoute = useCarouselJumpToIndex(
+      navigationState.routes,
+      swipeTranslationX,
+      sceneContainerWidth,
+      updateCurrentRouteIndex
+    );
 
-  const swipeTranslationAnimatedStyle =
-    useCarouselSwipeTranslationAnimatedStyle(swipeTranslationX);
+    useImperativeHandle(
+      ref,
+      () => ({
+        jumpToRoute,
+      }),
+      [jumpToRoute]
+    );
 
-  return (
-    <GestureDetector gesture={swipePanGesture}>
-      <View style={[styles.container, style]}>
-        {navigationState.routes.map((route, index) => {
-          const shouldRender =
-            index >= smallestRouteIndexToRender &&
-            index <= largestRouteIndexToRender;
-          const renderOffset = index * sceneContainerWidth;
-          if (!shouldRender) {
-            return null;
-          }
-          return (
-            <Animated.View
-              key={route.key}
-              style={[
-                styles.sceneContainer,
-                {
-                  left: renderOffset,
-                },
-                sceneContainerStyle,
-                swipeTranslationAnimatedStyle,
-              ]}
-            >
-              {renderScene({ layout, route, jumpTo: jumpToRoute })}
-            </Animated.View>
-          );
-        })}
-      </View>
-    </GestureDetector>
-  );
-});
+    const swipePanGesture = useCarouselSwipePanGesture(
+      currentRouteIndex,
+      swipeTranslationX,
+      updateCurrentRouteIndex,
+      sceneContainerWidth,
+      noOfRoutes,
+      handleSwipeStart,
+      handleSwipeEnd,
+      swipeEnabled
+    );
+
+    const swipeTranslationAnimatedStyle =
+      useCarouselSwipeTranslationAnimatedStyle(swipeTranslationX);
+
+    return (
+      <GestureDetector gesture={swipePanGesture}>
+        <View style={[styles.container, style]}>
+          {navigationState.routes.map((route, index) => {
+            const shouldRender =
+              index >= smallestRouteIndexToRender &&
+              index <= largestRouteIndexToRender;
+            const renderOffset = index * sceneContainerWidth;
+            if (!shouldRender) {
+              return null;
+            }
+            return (
+              <Animated.View
+                key={route.key}
+                style={[
+                  styles.sceneContainer,
+                  {
+                    left: renderOffset,
+                  },
+                  sceneContainerStyle,
+                  swipeTranslationAnimatedStyle,
+                ]}
+              >
+                {renderScene({ layout, route, jumpTo: jumpToRoute })}
+              </Animated.View>
+            );
+          })}
+        </View>
+      </GestureDetector>
+    );
+  })
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
 import {
   useSharedValue,
@@ -10,6 +10,7 @@ import {
 } from 'react-native-reanimated';
 import { AUTO_SWIPE_COMPLETION_DURATION } from '../constants/carousel';
 import { useCarouselRouteIndices } from './useCarousel';
+import type { Route } from '../types/common';
 
 const ACTIVE_OFFSET_X = [-10, 10];
 
@@ -107,6 +108,33 @@ export const useCarouselSwipePanGesture = (
   );
 
   return swipePanGesture;
+};
+
+export const useCarouselJumpToIndex = (
+  routes: Route[],
+  swipeTranslationX: SharedValue<number>,
+  sceneContainerWidth: number,
+  updateCurrentRouteIndex: (value: number) => void
+) => {
+  const jumpToRoute = useCallback(
+    (key: string) => {
+      const indexToJumpTo = routes.findIndex((route) => route.key === key);
+      if (indexToJumpTo === -1) {
+        return;
+      }
+      swipeTranslationX.value = withTiming(
+        -indexToJumpTo * sceneContainerWidth,
+        {
+          duration: AUTO_SWIPE_COMPLETION_DURATION,
+          easing: Easing.ease,
+        }
+      );
+      updateCurrentRouteIndex(indexToJumpTo);
+    },
+    [routes, sceneContainerWidth, swipeTranslationX, updateCurrentRouteIndex]
+  );
+
+  return jumpToRoute;
 };
 
 export const useCarouselSwipeTranslationAnimatedStyle = (
