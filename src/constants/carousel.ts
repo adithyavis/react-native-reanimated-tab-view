@@ -1,0 +1,1 @@
+export const AUTO_SWIPE_COMPLETION_DURATION = 200;

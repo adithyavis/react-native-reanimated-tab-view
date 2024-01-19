@@ -18,6 +18,8 @@ export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
     style,
     sceneContainerStyle,
     swipeEnabled = true,
+    onSwipeStart,
+    onSwipeEnd,
   } = props;
 
   const sceneContainerWidth = useMemo(() => layout.width, [layout.width]);
@@ -50,6 +52,14 @@ export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
 
   const swipeTranslationX = useSharedValue(0);
 
+  const handleSwipeStart = useCallback(() => {
+    onSwipeStart?.();
+  }, [onSwipeStart]);
+
+  const handleSwipeEnd = useCallback(() => {
+    onSwipeEnd?.();
+  }, [onSwipeEnd]);
+
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const jumpToRoute = useCallback(() => {}, []);
 
@@ -59,6 +69,8 @@ export const TabViewCarousel = React.memo((props: TabViewCarouselProps) => {
     updateCurrentRouteIndex,
     sceneContainerWidth,
     noOfRoutes,
+    handleSwipeStart,
+    handleSwipeEnd,
     swipeEnabled
   );
 
