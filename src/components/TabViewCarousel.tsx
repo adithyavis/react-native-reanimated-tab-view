@@ -17,6 +17,7 @@ import {
 } from '../hooks/useCarouselSwipe';
 import { useCarouselRouteIndices } from '../hooks/useCarousel';
 import { useStateUpdatesListener } from '../hooks/useStateUpdatesListener';
+import { Keyboard } from 'react-native';
 
 type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
@@ -32,9 +33,35 @@ export const TabViewCarousel = React.memo(
       style,
       sceneContainerStyle,
       swipeEnabled = true,
+      keyboardDismissMode = 'auto',
       onSwipeStart,
       onSwipeEnd,
     } = props;
+
+    const dismissKeyboard = useCallback(() => {
+      Keyboard.dismiss();
+    }, []);
+
+    const handleSwipeStart = useCallback(() => {
+      onSwipeStart?.();
+      if (keyboardDismissMode === 'on-drag') {
+        dismissKeyboard();
+      }
+    }, [dismissKeyboard, keyboardDismissMode, onSwipeStart]);
+
+    const handleSwipeEnd = useCallback(() => {
+      onSwipeEnd?.();
+    }, [onSwipeEnd]);
+
+    const handleIndexChange = useCallback(
+      (index: number) => {
+        onIndexChange?.(index);
+        if (keyboardDismissMode === 'auto') {
+          dismissKeyboard();
+        }
+      },
+      [dismissKeyboard, keyboardDismissMode, onIndexChange]
+    );
 
     const sceneContainerWidth = useMemo(() => layout.width, [layout.width]);
     const noOfRoutes = useMemo(
@@ -50,10 +77,10 @@ export const TabViewCarousel = React.memo(
         const prevCurrentRouteIndex = currentRouteIndex;
         setCurrentRouteIndex(indexToUpdate);
         if (indexToUpdate !== prevCurrentRouteIndex) {
-          onIndexChange?.(indexToUpdate);
+          handleIndexChange(indexToUpdate);
         }
       },
-      [currentRouteIndex, onIndexChange]
+      [currentRouteIndex, handleIndexChange]
     );
 
     const swipeTranslationX = useSharedValue(0);
@@ -91,14 +118,6 @@ export const TabViewCarousel = React.memo(
 
     const { smallestRouteIndexToRender, largestRouteIndexToRender } =
       useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
-
-    const handleSwipeStart = useCallback(() => {
-      onSwipeStart?.();
-    }, [onSwipeStart]);
-
-    const handleSwipeEnd = useCallback(() => {
-      onSwipeEnd?.();
-    }, [onSwipeEnd]);
 
     const swipePanGesture = useCarouselSwipePanGesture(
       currentRouteIndex,
