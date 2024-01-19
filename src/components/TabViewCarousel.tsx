@@ -16,6 +16,7 @@ import {
   useCarouselSwipeTranslationAnimatedStyle,
 } from '../hooks/useCarouselSwipe';
 import { useCarouselRouteIndices } from '../hooks/useCarousel';
+import { useStateUpdatesListener } from '../hooks/useStateUpdatesListener';
 
 type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
@@ -55,18 +56,7 @@ export const TabViewCarousel = React.memo(
       [currentRouteIndex, onIndexChange]
     );
 
-    const { smallestRouteIndexToRender, largestRouteIndexToRender } =
-      useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
-
     const swipeTranslationX = useSharedValue(0);
-
-    const handleSwipeStart = useCallback(() => {
-      onSwipeStart?.();
-    }, [onSwipeStart]);
-
-    const handleSwipeEnd = useCallback(() => {
-      onSwipeEnd?.();
-    }, [onSwipeEnd]);
 
     const jumpToRoute = useCarouselJumpToIndex(
       navigationState.routes,
@@ -82,6 +72,33 @@ export const TabViewCarousel = React.memo(
       }),
       [jumpToRoute]
     );
+
+    useStateUpdatesListener(
+      navigationState.index,
+      useCallback(() => {
+        updateCurrentRouteIndex(navigationState.index);
+        const routeToJumpTo = navigationState.routes[navigationState.index];
+        if (routeToJumpTo) {
+          jumpToRoute(routeToJumpTo.key);
+        }
+      }, [
+        jumpToRoute,
+        navigationState.index,
+        navigationState.routes,
+        updateCurrentRouteIndex,
+      ])
+    );
+
+    const { smallestRouteIndexToRender, largestRouteIndexToRender } =
+      useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
+
+    const handleSwipeStart = useCallback(() => {
+      onSwipeStart?.();
+    }, [onSwipeStart]);
+
+    const handleSwipeEnd = useCallback(() => {
+      onSwipeEnd?.();
+    }, [onSwipeEnd]);
 
     const swipePanGesture = useCarouselSwipePanGesture(
       currentRouteIndex,
