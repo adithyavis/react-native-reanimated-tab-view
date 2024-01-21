@@ -14817,9 +14817,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.14.0":
-  version: 2.14.0
-  resolution: "react-native-gesture-handler@npm:2.14.0"
+"react-native-gesture-handler@npm:~2.12.0":
+  version: 2.12.1
+  resolution: "react-native-gesture-handler@npm:2.12.1"
   dependencies:
     "@egjs/hammerjs": ^2.0.17
     hoist-non-react-statics: ^3.3.0
@@ -14829,7 +14829,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 8227d3f66f2f41932d3b7d12cc029d4ff1f57ba93249d71844cb1b75bae887cc50f9df516da52863746a2df8af4da013c1eb28b484caf181f782bcfe35bc59b0
+  checksum: 1aec3d71c5fd3b8087e613708ee77a0ce7a1ac2bc87f5a6a22529300795b48aaa2359bcba7309f2c14f9de1ca1ffa4904d06b3cb7263820f657a4469976aecb3
   languageName: node
   linkType: hard
 
@@ -14846,6 +14846,8 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     react-native: 0.72.6
+    react-native-gesture-handler: ~2.12.0
+    react-native-reanimated: 3.3.0
     react-native-web: ~0.19.6
   languageName: unknown
   linkType: soft
@@ -14875,19 +14877,21 @@ __metadata:
     react: 18.2.0
     react-native: 0.72.6
     react-native-builder-bob: ^0.20.0
-    react-native-gesture-handler: ^2.14.0
-    react-native-reanimated: ^3.6.1
+    react-native-gesture-handler: ~2.12.0
+    react-native-reanimated: ~3.3.0
     release-it: ^15.0.0
     typescript: ^5.0.2
   peerDependencies:
     react: "*"
     react-native: "*"
+    react-native-gesture-handler: ">=2.9.0"
+    react-native-reanimated: ">=3.0.0"
   languageName: unknown
   linkType: soft
 
-"react-native-reanimated@npm:^3.6.1":
-  version: 3.6.1
-  resolution: "react-native-reanimated@npm:3.6.1"
+"react-native-reanimated@npm:3.3.0, react-native-reanimated@npm:~3.3.0":
+  version: 3.3.0
+  resolution: "react-native-reanimated@npm:3.3.0"
   dependencies:
     "@babel/plugin-transform-object-assign": ^7.16.7
     "@babel/preset-typescript": ^7.16.7
@@ -14902,7 +14906,7 @@ __metadata:
     "@babel/plugin-transform-template-literals": ^7.0.0-0
     react: "*"
     react-native: "*"
-  checksum: 245e542de7496081c4c64fe219a6d33a4d7195502fd6e9c12374c04acb1318bdeb0c50889def5e213e3fe3cd0f6316b113a6b1c382715f1b6cf8a6a29f0cf4ab
+  checksum: 58096b28caef8af261c446eccb91a5a74caa303ba3520b1a2767c5b922b3d19b9a58612ab9b517a959c1b562b2e76e4cf4a8ffb21136960ed63375f6a4c37d1e
   languageName: node
   linkType: hard
 
