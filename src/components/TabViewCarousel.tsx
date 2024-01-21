@@ -38,6 +38,7 @@ export const TabViewCarousel = React.memo(
       swipeEnabled = true,
       keyboardDismissMode = 'auto',
       smoothJump = true,
+      animatedRouteIndex,
       onSwipeStart,
       onSwipeEnd,
     } = props;
@@ -103,7 +104,8 @@ export const TabViewCarousel = React.memo(
       prevRouteTranslationX,
       setPrevRouteIndex,
       smoothJump,
-      setIsJumping
+      setIsJumping,
+      animatedRouteIndex
     );
 
     useImperativeHandle(
@@ -143,7 +145,8 @@ export const TabViewCarousel = React.memo(
       handleSwipeEnd,
       swipeEnabled,
       setPrevRouteIndex,
-      isJumping
+      isJumping,
+      animatedRouteIndex
     );
 
     const swipeTranslationAnimatedStyle =

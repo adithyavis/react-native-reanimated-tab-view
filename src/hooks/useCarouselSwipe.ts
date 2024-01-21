@@ -30,7 +30,8 @@ export const useCarouselSwipePanGesture = (
   handleSwipeEnd: () => void,
   _swipeEnabled = true,
   setPrevRouteIndex: (index: number) => void,
-  isJumping: boolean
+  isJumping: boolean,
+  animatedRouteIndex: SharedValue<number>
 ) => {
   const preSwipeStartSwipeTranslationX = useSharedValue(0);
 
@@ -81,6 +82,8 @@ export const useCarouselSwipePanGesture = (
             ),
             -1 * minSwipeTranslationX
           );
+          animatedRouteIndex.value =
+            -swipeTranslationX.value / sceneContainerWidth;
         })
         .onEnd(({ translationX, velocityX }) => {
           const approximatedRouteIndexOnSwipeStart =
@@ -93,6 +96,13 @@ export const useCarouselSwipePanGesture = (
           if (shouldInertiallySnapBackToCurrentRouteIndex) {
             swipeTranslationX.value = withTiming(
               -approximatedRouteIndexOnSwipeStart * sceneContainerWidth,
+              {
+                duration: AUTO_SWIPE_COMPLETION_DURATION,
+                easing: Easing.out(Easing.ease),
+              }
+            );
+            animatedRouteIndex.value = withTiming(
+              approximatedRouteIndexOnSwipeStart,
               {
                 duration: AUTO_SWIPE_COMPLETION_DURATION,
                 easing: Easing.out(Easing.ease),
@@ -122,6 +132,11 @@ export const useCarouselSwipePanGesture = (
               easing: Easing.out(Easing.ease),
             }
           );
+          animatedRouteIndex.value = withTiming(routeIndexToInertiallySnap, {
+            duration: AUTO_SWIPE_COMPLETION_DURATION,
+            easing: Easing.out(Easing.ease),
+          });
+
           runOnJS(updateCurrentRouteIndex)(routeIndexToInertiallySnap);
           runOnJS(handleSwipeEnd)();
           runOnJS(handleSwipeAnimationEnd)(routeIndexToInertiallySnap);
@@ -134,6 +149,7 @@ export const useCarouselSwipePanGesture = (
       sceneContainerWidth,
       maxSwipeTranslationX,
       minSwipeTranslationX,
+      animatedRouteIndex,
       updateCurrentRouteIndex,
       handleSwipeEnd,
       handleSwipeAnimationEnd,
@@ -155,7 +171,8 @@ export const useCarouselJumpToIndex = (
   prevRouteTranslationX: SharedValue<number>,
   setPrevRouteIndex: (value: number) => void,
   smoothJump: boolean,
-  setIsJumping: Dispatch<SetStateAction<boolean>>
+  setIsJumping: Dispatch<SetStateAction<boolean>>,
+  animatedRouteIndex: SharedValue<number>
 ) => {
   const { minRouteIndex, maxRouteIndex } = useCarouselRouteIndices(
     currentRouteIndex,
@@ -206,6 +223,8 @@ export const useCarouselJumpToIndex = (
 
       updateCurrentRouteIndex(routeIndexToJumpTo);
 
+      animatedRouteIndex.value = routeIndexToJumpTo;
+
       swipeTranslationX.value = withTiming(
         -routeIndexToJumpTo * sceneContainerWidth,
         {
@@ -217,6 +236,7 @@ export const useCarouselJumpToIndex = (
       handleJumpAnimationEnd(routeIndexToJumpTo);
     },
     [
+      animatedRouteIndex,
       currentRouteIndex,
       handleJumpAnimationEnd,
       maxRouteIndex,

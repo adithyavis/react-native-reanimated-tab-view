@@ -22,6 +22,7 @@ export type TabViewCarouselProps = Omit<ViewProps, 'children'> & {
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
   smoothJump?: boolean;
+  animatedRouteIndex: SharedValue<number>;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
 };
