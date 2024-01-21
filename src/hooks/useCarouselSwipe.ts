@@ -1,7 +1,6 @@
 import {
   useCallback,
   useMemo,
-  useRef,
   type Dispatch,
   type SetStateAction,
 } from 'react';
@@ -42,8 +41,6 @@ export const useCarouselSwipePanGesture = (
   const minSwipeTranslationX = minRouteIndex * sceneContainerWidth;
   const maxSwipeTranslationX = maxRouteIndex * sceneContainerWidth;
 
-  const approximatedRouteIndexOnSwipeStartRef = useRef(0);
-
   const swipeEnabled = useMemo(
     () => !isJumping && _swipeEnabled,
     [_swipeEnabled, isJumping]
@@ -66,9 +63,6 @@ export const useCarouselSwipePanGesture = (
         .onStart(() => {
           preSwipeStartSwipeTranslationX.value = swipeTranslationX.value;
           runOnJS(handleSwipeStart)();
-          approximatedRouteIndexOnSwipeStartRef.current = Math.round(
-            -swipeTranslationX.value / sceneContainerWidth
-          );
         })
         .onUpdate(({ translationX }) => {
           const boundedTranslationX = Math.min(
@@ -86,28 +80,23 @@ export const useCarouselSwipePanGesture = (
             -swipeTranslationX.value / sceneContainerWidth;
         })
         .onEnd(({ translationX, velocityX }) => {
-          const approximatedRouteIndexOnSwipeStart =
-            approximatedRouteIndexOnSwipeStartRef.current;
           const shouldInertiallySnapBackToCurrentRouteIndex =
             Math.round(
               -(swipeTranslationX.value + velocityX) / sceneContainerWidth
-            ) === approximatedRouteIndexOnSwipeStart;
+            ) === currentRouteIndex;
 
           if (shouldInertiallySnapBackToCurrentRouteIndex) {
             swipeTranslationX.value = withTiming(
-              -approximatedRouteIndexOnSwipeStart * sceneContainerWidth,
+              -currentRouteIndex * sceneContainerWidth,
               {
                 duration: AUTO_SWIPE_COMPLETION_DURATION,
                 easing: Easing.out(Easing.ease),
               }
             );
-            animatedRouteIndex.value = withTiming(
-              approximatedRouteIndexOnSwipeStart,
-              {
-                duration: AUTO_SWIPE_COMPLETION_DURATION,
-                easing: Easing.out(Easing.ease),
-              }
-            );
+            animatedRouteIndex.value = withTiming(currentRouteIndex, {
+              duration: AUTO_SWIPE_COMPLETION_DURATION,
+              easing: Easing.out(Easing.ease),
+            });
             runOnJS(handleSwipeEnd)();
             return;
           }
@@ -117,12 +106,12 @@ export const useCarouselSwipePanGesture = (
           if (leftSwipe) {
             routeIndexToInertiallySnap = Math.max(
               minRouteIndex,
-              approximatedRouteIndexOnSwipeStart - 1
+              currentRouteIndex - 1
             );
           } else {
             routeIndexToInertiallySnap = Math.min(
               maxRouteIndex,
-              approximatedRouteIndexOnSwipeStart + 1
+              currentRouteIndex + 1
             );
           }
           swipeTranslationX.value = withTiming(
@@ -150,6 +139,7 @@ export const useCarouselSwipePanGesture = (
       maxSwipeTranslationX,
       minSwipeTranslationX,
       animatedRouteIndex,
+      currentRouteIndex,
       updateCurrentRouteIndex,
       handleSwipeEnd,
       handleSwipeAnimationEnd,
