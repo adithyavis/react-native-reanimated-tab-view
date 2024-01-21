@@ -8,7 +8,10 @@ import React, {
 import { View } from 'react-native';
 import type { TabViewCarouselProps } from '../types/TabViewCarousel';
 import { GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
 import {
   useCarouselJumpToIndex,
@@ -34,6 +37,7 @@ export const TabViewCarousel = React.memo(
       sceneContainerStyle,
       swipeEnabled = true,
       keyboardDismissMode = 'auto',
+      smoothJump = true,
       onSwipeStart,
       onSwipeEnd,
     } = props;
@@ -72,6 +76,7 @@ export const TabViewCarousel = React.memo(
     const [currentRouteIndex, setCurrentRouteIndex] = useState(
       navigationState.index
     );
+    const [prevRouteIndex, setPrevRouteIndex] = useState(currentRouteIndex);
     const updateCurrentRouteIndex = useCallback(
       (indexToUpdate: number) => {
         const prevCurrentRouteIndex = currentRouteIndex;
@@ -84,12 +89,21 @@ export const TabViewCarousel = React.memo(
     );
 
     const swipeTranslationX = useSharedValue(0);
+    const prevRouteTranslationX = useSharedValue(0);
+
+    const [isJumping, setIsJumping] = useState(false);
 
     const jumpToRoute = useCarouselJumpToIndex(
       navigationState.routes,
+      currentRouteIndex,
       swipeTranslationX,
       sceneContainerWidth,
-      updateCurrentRouteIndex
+      noOfRoutes,
+      updateCurrentRouteIndex,
+      prevRouteTranslationX,
+      setPrevRouteIndex,
+      smoothJump,
+      setIsJumping
     );
 
     useImperativeHandle(
@@ -127,22 +141,57 @@ export const TabViewCarousel = React.memo(
       noOfRoutes,
       handleSwipeStart,
       handleSwipeEnd,
-      swipeEnabled
+      swipeEnabled,
+      setPrevRouteIndex,
+      isJumping
     );
 
     const swipeTranslationAnimatedStyle =
       useCarouselSwipeTranslationAnimatedStyle(swipeTranslationX);
+
+    const prevRouteTranslationAnimatedStyle = useAnimatedStyle(
+      () => ({
+        transform: [{ translateX: prevRouteTranslationX.value }],
+      }),
+      [prevRouteTranslationX]
+    );
 
     return (
       <GestureDetector gesture={swipePanGesture}>
         <View style={[styles.container, style]}>
           {navigationState.routes.map((route, index) => {
             const shouldRender =
-              index >= smallestRouteIndexToRender &&
-              index <= largestRouteIndexToRender;
+              (index >= smallestRouteIndexToRender &&
+                index <= largestRouteIndexToRender) ||
+              index === prevRouteIndex;
             const renderOffset = index * sceneContainerWidth;
             if (!shouldRender) {
               return null;
+            }
+            if (index === prevRouteIndex) {
+              return (
+                <Animated.View
+                  key={route.key}
+                  style={[
+                    styles.sceneContainer,
+                    styles.sceneContainerZIndex1,
+                    {
+                      left: renderOffset,
+                    },
+                    sceneContainerStyle,
+                    swipeTranslationAnimatedStyle,
+                  ]}
+                >
+                  <Animated.View
+                    style={[
+                      styles.prevRouteSceneWrapper,
+                      prevRouteTranslationAnimatedStyle,
+                    ]}
+                  >
+                    {renderScene({ layout, route, jumpTo: jumpToRoute })}
+                  </Animated.View>
+                </Animated.View>
+              );
             }
             return (
               <Animated.View
@@ -174,6 +223,14 @@ const styles = StyleSheet.create({
   },
   sceneContainer: {
     position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
+  },
+  sceneContainerZIndex1: {
+    zIndex: 1,
+  },
+  prevRouteSceneWrapper: {
     width: '100%',
     height: '100%',
   },

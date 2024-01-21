@@ -21,6 +21,7 @@ export type TabViewCarouselProps = Omit<ViewProps, 'children'> & {
   sceneContainerStyle?: StyleProp<ViewStyle>;
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
+  smoothJump?: boolean;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
 };

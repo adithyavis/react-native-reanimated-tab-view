@@ -1,4 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import { Gesture } from 'react-native-gesture-handler';
 import {
   useSharedValue,
@@ -22,7 +28,9 @@ export const useCarouselSwipePanGesture = (
   noOfRoutes: number,
   handleSwipeStart: () => void,
   handleSwipeEnd: () => void,
-  swipeEnabled = true
+  _swipeEnabled = true,
+  setPrevRouteIndex: (index: number) => void,
+  isJumping: boolean
 ) => {
   const preSwipeStartSwipeTranslationX = useSharedValue(0);
 
@@ -33,6 +41,22 @@ export const useCarouselSwipePanGesture = (
   const minSwipeTranslationX = minRouteIndex * sceneContainerWidth;
   const maxSwipeTranslationX = maxRouteIndex * sceneContainerWidth;
 
+  const approximatedRouteIndexOnSwipeStartRef = useRef(0);
+
+  const swipeEnabled = useMemo(
+    () => !isJumping && _swipeEnabled,
+    [_swipeEnabled, isJumping]
+  );
+
+  const handleSwipeAnimationEnd = useCallback(
+    (prevRouteIndex: number) => {
+      setTimeout(() => {
+        setPrevRouteIndex(prevRouteIndex);
+      }, AUTO_SWIPE_COMPLETION_DURATION);
+    },
+    [setPrevRouteIndex]
+  );
+
   const swipePanGesture = useMemo(
     () =>
       Gesture.Pan()
@@ -41,67 +65,78 @@ export const useCarouselSwipePanGesture = (
         .onStart(() => {
           preSwipeStartSwipeTranslationX.value = swipeTranslationX.value;
           runOnJS(handleSwipeStart)();
+          approximatedRouteIndexOnSwipeStartRef.current = Math.round(
+            -swipeTranslationX.value / sceneContainerWidth
+          );
         })
         .onUpdate(({ translationX }) => {
+          const boundedTranslationX = Math.min(
+            Math.max(translationX, -sceneContainerWidth),
+            sceneContainerWidth
+          );
           swipeTranslationX.value = Math.min(
             Math.max(
-              preSwipeStartSwipeTranslationX.value + translationX,
+              preSwipeStartSwipeTranslationX.value + boundedTranslationX,
               -1 * maxSwipeTranslationX
             ),
             -1 * minSwipeTranslationX
           );
         })
         .onEnd(({ translationX, velocityX }) => {
+          const approximatedRouteIndexOnSwipeStart =
+            approximatedRouteIndexOnSwipeStartRef.current;
           const shouldInertiallySnapBackToCurrentRouteIndex =
             Math.round(
               -(swipeTranslationX.value + velocityX) / sceneContainerWidth
-            ) === currentRouteIndex;
+            ) === approximatedRouteIndexOnSwipeStart;
 
           if (shouldInertiallySnapBackToCurrentRouteIndex) {
             swipeTranslationX.value = withTiming(
-              -currentRouteIndex * sceneContainerWidth,
+              -approximatedRouteIndexOnSwipeStart * sceneContainerWidth,
               {
                 duration: AUTO_SWIPE_COMPLETION_DURATION,
-                easing: Easing.ease,
+                easing: Easing.out(Easing.ease),
               }
             );
             runOnJS(handleSwipeEnd)();
             return;
           }
 
-          let routeIndexToInertiallySnap;
-          if (translationX > 0) {
+          let routeIndexToInertiallySnap: number;
+          const leftSwipe = translationX > 0;
+          if (leftSwipe) {
             routeIndexToInertiallySnap = Math.max(
               minRouteIndex,
-              currentRouteIndex - 1
+              approximatedRouteIndexOnSwipeStart - 1
             );
           } else {
             routeIndexToInertiallySnap = Math.min(
               maxRouteIndex,
-              currentRouteIndex + 1
+              approximatedRouteIndexOnSwipeStart + 1
             );
           }
           swipeTranslationX.value = withTiming(
             -routeIndexToInertiallySnap * sceneContainerWidth,
             {
               duration: AUTO_SWIPE_COMPLETION_DURATION,
-              easing: Easing.ease,
+              easing: Easing.out(Easing.ease),
             }
           );
           runOnJS(updateCurrentRouteIndex)(routeIndexToInertiallySnap);
           runOnJS(handleSwipeEnd)();
+          runOnJS(handleSwipeAnimationEnd)(routeIndexToInertiallySnap);
         }),
     [
       swipeEnabled,
       preSwipeStartSwipeTranslationX,
       swipeTranslationX,
       handleSwipeStart,
+      sceneContainerWidth,
       maxSwipeTranslationX,
       minSwipeTranslationX,
-      sceneContainerWidth,
-      currentRouteIndex,
       updateCurrentRouteIndex,
       handleSwipeEnd,
+      handleSwipeAnimationEnd,
       minRouteIndex,
       maxRouteIndex,
     ]
@@ -112,26 +147,88 @@ export const useCarouselSwipePanGesture = (
 
 export const useCarouselJumpToIndex = (
   routes: Route[],
+  currentRouteIndex: number,
   swipeTranslationX: SharedValue<number>,
   sceneContainerWidth: number,
-  updateCurrentRouteIndex: (value: number) => void
+  noOfRoutes: number,
+  updateCurrentRouteIndex: (value: number) => void,
+  prevRouteTranslationX: SharedValue<number>,
+  setPrevRouteIndex: (value: number) => void,
+  smoothJump: boolean,
+  setIsJumping: Dispatch<SetStateAction<boolean>>
 ) => {
+  const { minRouteIndex, maxRouteIndex } = useCarouselRouteIndices(
+    currentRouteIndex,
+    noOfRoutes
+  );
+
+  const handleJumpAnimationEnd = useCallback(
+    (prevRouteIndex: number) => {
+      setTimeout(() => {
+        setPrevRouteIndex(prevRouteIndex);
+        prevRouteTranslationX.value = 0;
+
+        setIsJumping(false);
+      }, AUTO_SWIPE_COMPLETION_DURATION);
+    },
+    [prevRouteTranslationX, setIsJumping, setPrevRouteIndex]
+  );
+
   const jumpToRoute = useCallback(
     (key: string) => {
-      const indexToJumpTo = routes.findIndex((route) => route.key === key);
-      if (indexToJumpTo === -1) {
+      const routeIndexToJumpTo = routes.findIndex((route) => route.key === key);
+      /** Only jump if route is in between the min and max ranges,
+       * and not equal to current route index
+       */
+      if (
+        routeIndexToJumpTo === -1 ||
+        routeIndexToJumpTo < minRouteIndex ||
+        routeIndexToJumpTo > maxRouteIndex ||
+        routeIndexToJumpTo === currentRouteIndex
+      ) {
         return;
       }
+
+      setIsJumping(true);
+
+      if (smoothJump) {
+        const shouldJumpLeft = routeIndexToJumpTo > currentRouteIndex;
+        let tempRouteIndexToJumpTo: number;
+        if (shouldJumpLeft) {
+          tempRouteIndexToJumpTo = routeIndexToJumpTo - 1;
+        } else {
+          tempRouteIndexToJumpTo = routeIndexToJumpTo + 1;
+        }
+        swipeTranslationX.value = -tempRouteIndexToJumpTo * sceneContainerWidth;
+        prevRouteTranslationX.value =
+          (tempRouteIndexToJumpTo - currentRouteIndex) * sceneContainerWidth;
+      }
+
+      updateCurrentRouteIndex(routeIndexToJumpTo);
+
       swipeTranslationX.value = withTiming(
-        -indexToJumpTo * sceneContainerWidth,
+        -routeIndexToJumpTo * sceneContainerWidth,
         {
           duration: AUTO_SWIPE_COMPLETION_DURATION,
           easing: Easing.ease,
         }
       );
-      updateCurrentRouteIndex(indexToJumpTo);
+
+      handleJumpAnimationEnd(routeIndexToJumpTo);
     },
-    [routes, sceneContainerWidth, swipeTranslationX, updateCurrentRouteIndex]
+    [
+      currentRouteIndex,
+      handleJumpAnimationEnd,
+      maxRouteIndex,
+      minRouteIndex,
+      prevRouteTranslationX,
+      routes,
+      sceneContainerWidth,
+      setIsJumping,
+      smoothJump,
+      swipeTranslationX,
+      updateCurrentRouteIndex,
+    ]
   );
 
   return jumpToRoute;
