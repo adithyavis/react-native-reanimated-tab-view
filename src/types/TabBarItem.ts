@@ -8,6 +8,8 @@ export type TabBarItemProps = Omit<ViewProps, 'children'> &
     index: number;
     route: Route;
     focused: boolean;
+    activeColor?: string;
+    inactiveColor?: string;
     getLabelText?: (scene: Scene) => string | undefined;
     renderLabel?: (
       scene: Scene & {

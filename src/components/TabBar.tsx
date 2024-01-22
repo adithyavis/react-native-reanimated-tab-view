@@ -15,6 +15,8 @@ const TabBar = React.memo((props: TabBarProps) => {
     bounces,
     layout,
     animatedRouteIndex,
+    activeColor,
+    inactiveColor,
     jumpTo,
     getLabelText,
     renderTabBarItem,
@@ -47,6 +49,8 @@ const TabBar = React.memo((props: TabBarProps) => {
               index={index}
               route={route}
               focused={focused}
+              activeColor={activeColor}
+              inactiveColor={inactiveColor}
               animatedRouteIndex={animatedRouteIndex}
               getLabelText={getLabelText}
               jumpTo={jumpTo}
@@ -65,6 +69,8 @@ const TabBar = React.memo((props: TabBarProps) => {
             route={route}
             focused={focused}
             animatedRouteIndex={animatedRouteIndex}
+            activeColor={activeColor}
+            inactiveColor={inactiveColor}
             getLabelText={getLabelText}
             jumpTo={jumpTo}
             onTabPress={onTabPress}
@@ -75,16 +81,18 @@ const TabBar = React.memo((props: TabBarProps) => {
         );
       },
       [
-        animatedRouteIndex,
-        getLabelText,
-        jumpTo,
-        layout.width,
         navigationState.index,
         navigationState.routes.length,
-        onTabLongPress,
-        onTabPress,
         renderTabBarItem,
         scrollEnabled,
+        layout.width,
+        animatedRouteIndex,
+        activeColor,
+        inactiveColor,
+        getLabelText,
+        jumpTo,
+        onTabPress,
+        onTabLongPress,
         tabBarItemStyle,
         labelStyle,
       ]
@@ -110,5 +118,6 @@ export default TabBar;
 const styles = StyleSheet.create({
   tabBarContainer: {
     height: TAB_BAR_HEIGHT,
+    backgroundColor: '#25A0F6',
   },
 });

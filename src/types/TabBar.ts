@@ -9,6 +9,8 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
     navigationState: NavigationState;
     scrollEnabled?: boolean;
     bounces?: boolean;
+    activeColor?: string;
+    inactiveColor?: string;
     getLabelText?: (scene: Scene) => string | undefined;
     renderTabBarItem?: (
       scene: Scene & {

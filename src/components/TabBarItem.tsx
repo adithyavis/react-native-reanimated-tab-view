@@ -4,11 +4,16 @@ import type { TabBarItemProps } from '../types/TabBarItem';
 import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
+const DEFAULT_ACTIVE_COLOR = 'rgba(255, 255, 255, 1)';
+const DEFAULT_INACTIVE_COLOR = 'rgba(255, 255, 255, 0.7)';
+
 const TabBarItem = React.memo((props: TabBarItemProps) => {
   const {
     index,
     route,
     animatedRouteIndex,
+    activeColor,
+    inactiveColor,
     jumpTo,
     getLabelText,
     onTabPress,
@@ -28,13 +33,6 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
     jumpTo(route.key);
   }, [jumpTo, onTabLongPress, route]);
 
-  //   const animatedActiveLabelStyle = useAnimatedStyle(
-  //     () => ({
-  //       opacity: Math.min(0, 1 - Math.abs(index - 2 * animatedRouteIndex.value)),
-  //     }),
-  //     [index]
-  //   );
-
   const animatedActiveLabelStyle = useAnimatedStyle(() => {
     return {
       opacity: Math.max(0, 1 - Math.abs(index - animatedRouteIndex.value)),
@@ -43,28 +41,46 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
 
   const animatedInactiveLabelStyle = useAnimatedStyle(() => {
     return {
-      opacity: Math.max(0, Math.abs(animatedRouteIndex.value - index)),
+      opacity: Math.min(1, Math.abs(animatedRouteIndex.value - index)),
     };
   }, [index]);
 
   const activeLabel = useMemo(() => {
+    const activeColorStyle = activeColor ? { color: activeColor } : {};
     return (
       <Animated.Text
-        style={[styles.activeLabel, animatedActiveLabelStyle, labelStyle]}
+        style={[
+          styles.activeLabel,
+          animatedActiveLabelStyle,
+          activeColorStyle,
+          labelStyle,
+        ]}
       >
         {getLabelText?.({ route })}
       </Animated.Text>
     );
-  }, [animatedActiveLabelStyle, getLabelText, labelStyle, route]);
+  }, [activeColor, animatedActiveLabelStyle, getLabelText, labelStyle, route]);
   const inactiveLabel = useMemo(() => {
+    const inactiveColorStyle = inactiveColor ? { color: inactiveColor } : {};
     return (
       <Animated.Text
-        style={[styles.inactiveLabel, animatedInactiveLabelStyle, labelStyle]}
+        style={[
+          styles.inactiveLabel,
+          animatedInactiveLabelStyle,
+          inactiveColorStyle,
+          labelStyle,
+        ]}
       >
         {getLabelText?.({ route })}
       </Animated.Text>
     );
-  }, [animatedInactiveLabelStyle, getLabelText, labelStyle, route]);
+  }, [
+    inactiveColor,
+    animatedInactiveLabelStyle,
+    getLabelText,
+    labelStyle,
+    route,
+  ]);
 
   return (
     <TouchableOpacity
@@ -86,10 +102,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   activeLabel: {
-    color: 'black',
+    color: DEFAULT_ACTIVE_COLOR,
   },
   inactiveLabel: {
     position: 'absolute',
-    color: 'gray',
+    color: DEFAULT_INACTIVE_COLOR,
   },
 });
