@@ -22,11 +22,11 @@ import { useCarouselRouteIndices } from '../hooks/useCarousel';
 import { useStateUpdatesListener } from '../hooks/useStateUpdatesListener';
 import { Keyboard } from 'react-native';
 
-type CarouselImperativeHandle = {
+export type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
 };
 
-export const TabViewCarousel = React.memo(
+const TabViewCarousel = React.memo(
   forwardRef<CarouselImperativeHandle, TabViewCarouselProps>((props, ref) => {
     const {
       navigationState,
@@ -191,7 +191,12 @@ export const TabViewCarousel = React.memo(
                       prevRouteTranslationAnimatedStyle,
                     ]}
                   >
-                    {renderScene({ layout, route, jumpTo: jumpToRoute })}
+                    {renderScene({
+                      layout,
+                      route,
+                      animatedRouteIndex,
+                      jumpTo: jumpToRoute,
+                    })}
                   </Animated.View>
                 </Animated.View>
               );
@@ -208,7 +213,12 @@ export const TabViewCarousel = React.memo(
                   swipeTranslationAnimatedStyle,
                 ]}
               >
-                {renderScene({ layout, route, jumpTo: jumpToRoute })}
+                {renderScene({
+                  layout,
+                  route,
+                  animatedRouteIndex,
+                  jumpTo: jumpToRoute,
+                })}
               </Animated.View>
             );
           })}
@@ -218,10 +228,12 @@ export const TabViewCarousel = React.memo(
   })
 );
 
+export default TabViewCarousel;
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '100%',
+    flex: 1,
     overflow: 'hidden',
   },
   sceneContainer: {
