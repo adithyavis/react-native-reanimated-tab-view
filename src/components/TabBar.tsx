@@ -44,6 +44,7 @@ const TabBar = React.memo((props: TabBarProps) => {
           const _tabBarItemStyle = { paddingHorizontal: 30 };
           return (
             <TabBarItem
+              index={index}
               route={route}
               focused={focused}
               animatedRouteIndex={animatedRouteIndex}
@@ -60,6 +61,7 @@ const TabBar = React.memo((props: TabBarProps) => {
         const _tabBarItemStyle = { width };
         return (
           <TabBarItem
+            index={index}
             route={route}
             focused={focused}
             animatedRouteIndex={animatedRouteIndex}

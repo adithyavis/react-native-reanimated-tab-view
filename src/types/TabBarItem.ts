@@ -5,6 +5,7 @@ import type { TextStyle } from 'react-native';
 
 export type TabBarItemProps = Omit<ViewProps, 'children'> &
   Omit<SceneRendererProps, 'layout'> & {
+    index: number;
     route: Route;
     focused: boolean;
     getLabelText?: (scene: Scene) => string | undefined;

@@ -1,12 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Text } from 'react-native';
 import type { TabBarItemProps } from '../types/TabBarItem';
 import { StyleSheet } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 const TabBarItem = React.memo((props: TabBarItemProps) => {
   const {
+    index,
     route,
+    animatedRouteIndex,
     jumpTo,
     getLabelText,
     onTabPress,
@@ -26,9 +28,43 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
     jumpTo(route.key);
   }, [jumpTo, onTabLongPress, route]);
 
-  const label = useMemo(() => {
-    return <Text style={labelStyle}>{getLabelText?.({ route })}</Text>;
-  }, [getLabelText, labelStyle, route]);
+  //   const animatedActiveLabelStyle = useAnimatedStyle(
+  //     () => ({
+  //       opacity: Math.min(0, 1 - Math.abs(index - 2 * animatedRouteIndex.value)),
+  //     }),
+  //     [index]
+  //   );
+
+  const animatedActiveLabelStyle = useAnimatedStyle(() => {
+    return {
+      opacity: Math.max(0, 1 - Math.abs(index - animatedRouteIndex.value)),
+    };
+  }, [index]);
+
+  const animatedInactiveLabelStyle = useAnimatedStyle(() => {
+    return {
+      opacity: Math.max(0, Math.abs(animatedRouteIndex.value - index)),
+    };
+  }, [index]);
+
+  const activeLabel = useMemo(() => {
+    return (
+      <Animated.Text
+        style={[styles.activeLabel, animatedActiveLabelStyle, labelStyle]}
+      >
+        {getLabelText?.({ route })}
+      </Animated.Text>
+    );
+  }, [animatedActiveLabelStyle, getLabelText, labelStyle, route]);
+  const inactiveLabel = useMemo(() => {
+    return (
+      <Animated.Text
+        style={[styles.inactiveLabel, animatedInactiveLabelStyle, labelStyle]}
+      >
+        {getLabelText?.({ route })}
+      </Animated.Text>
+    );
+  }, [animatedInactiveLabelStyle, getLabelText, labelStyle, route]);
 
   return (
     <TouchableOpacity
@@ -36,7 +72,8 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
       onLongPress={handleLongPressTabItem}
       style={[styles.tabBarItem, style]}
     >
-      {label}
+      {activeLabel}
+      {inactiveLabel}
     </TouchableOpacity>
   );
 });
@@ -47,5 +84,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+  },
+  activeLabel: {
+    color: 'black',
+  },
+  inactiveLabel: {
+    position: 'absolute',
+    color: 'gray',
   },
 });
