@@ -43,7 +43,8 @@ const TabBar = React.memo((props: TabBarProps) => {
           return <>{renderTabBarItem({ ...scene, focused })}</>;
         }
         if (scrollEnabled) {
-          const _tabBarItemStyle = { paddingHorizontal: 30 };
+          const width = (layout.width / 5) * 2;
+          const _tabBarItemStyle = { width };
           return (
             <TabBarItem
               index={index}
