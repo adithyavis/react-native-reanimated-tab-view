@@ -89,7 +89,9 @@ const TabViewCarousel = React.memo(
       [currentRouteIndex, handleIndexChange]
     );
 
-    const swipeTranslationX = useSharedValue(0);
+    const swipeTranslationX = useSharedValue(
+      -navigationState.index * layout.width
+    );
     const prevRouteTranslationX = useSharedValue(0);
 
     const [isJumping, setIsJumping] = useState(false);
