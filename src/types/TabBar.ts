@@ -3,6 +3,7 @@ import type { NavigationState, Scene, SceneRendererProps } from './common';
 import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
 import type { TextStyle } from 'react-native';
+import type { TabBarItemProps } from './TabBarItem';
 
 export type TabBarProps = Omit<ViewProps, 'children'> &
   SceneRendererProps & {
@@ -12,11 +13,7 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
     activeColor?: string;
     inactiveColor?: string;
     getLabelText?: (scene: Scene) => string | undefined;
-    renderTabBarItem?: (
-      scene: Scene & {
-        focused: boolean;
-      }
-    ) => React.ReactNode;
+    renderTabBarItem?: (props: TabBarItemProps) => React.ReactNode;
     onTabPress?: (scene: Scene) => void;
     onTabLongPress?: (scene: Scene) => void;
     tabBarItemStyle?: StyleProp<ViewStyle>;
@@ -24,3 +21,7 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
     labelStyle?: StyleProp<TextStyle>;
     contentContainerStyle?: StyleProp<ViewStyle>;
   };
+
+export type RouteIndexToTabWidthMap = {
+  [key: number]: number;
+};
