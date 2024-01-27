@@ -7,6 +7,7 @@ import type {
   Route,
   SceneRendererProps,
 } from './common';
+import type { TabBarProps } from './TabBar';
 
 export type TabViewProps = Omit<ViewProps, 'children'> & {
   onIndexChange: (index: number) => void;
@@ -16,12 +17,8 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
       route: Route;
     }
   ) => React.ReactNode;
-  renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
-  renderTabBar?: (
-    props: SceneRendererProps & {
-      navigationState: NavigationState;
-    }
-  ) => React.ReactNode;
+  // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
+  renderTabBar?: (props: TabBarProps) => React.ReactNode;
   tabBarPosition?: 'top' | 'bottom';
   initialLayout?: Partial<Layout>;
   sceneContainerStyle?: StyleProp<ViewStyle>;
