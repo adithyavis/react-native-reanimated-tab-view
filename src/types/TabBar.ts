@@ -25,3 +25,7 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
 export type RouteIndexToTabWidthMap = {
   [key: number]: number;
 };
+
+export type RouteIndexToTabOffsetMap = {
+  [key: number]: number;
+};

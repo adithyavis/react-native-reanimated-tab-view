@@ -1,5 +1,9 @@
-import React, { useCallback, useMemo, useRef } from 'react';
-import type { RouteIndexToTabWidthMap, TabBarProps } from '../types/TabBar';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import type {
+  RouteIndexToTabOffsetMap,
+  RouteIndexToTabWidthMap,
+  TabBarProps,
+} from '../types/TabBar';
 import { FlatList } from 'react-native-gesture-handler';
 import type { FlatListProps } from 'react-native';
 import type { Route } from '../types/common';
@@ -9,6 +13,8 @@ import TabBarItem from './TabBarItem';
 import { StyleSheet } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import { useTabBarAutoScroll } from '../hooks/useTabBarAutoScroll';
+import TabIndicator from './TabIndicator';
+import { useHandleTabBarItemLayout } from '../hooks/useTabBarItemLayout';
 
 const TabBar = React.memo((props: TabBarProps) => {
   const {
@@ -26,6 +32,7 @@ const TabBar = React.memo((props: TabBarProps) => {
     onTabLongPress,
     tabBarItemStyle,
     labelStyle,
+    indicatorStyle,
     contentContainerStyle,
     style,
   } = props;
@@ -33,14 +40,23 @@ const TabBar = React.memo((props: TabBarProps) => {
   const flatListRef = useRef<FlatList>(null);
 
   const routeIndexToTabWidthMapRef = useRef<RouteIndexToTabWidthMap>({});
+  const [routeIndexToTabOffsetMap, setRouteIndexToTabOffsetMap] =
+    useState<RouteIndexToTabOffsetMap>({});
 
   const { autoScrollToRouteIndex, handleScrollToIndexFailed } =
     useTabBarAutoScroll(
       flatListRef,
       navigationState,
       routeIndexToTabWidthMapRef,
+      routeIndexToTabOffsetMap,
       layout
     );
+
+  const { handleTabBarItemLayout } = useHandleTabBarItemLayout(
+    routeIndexToTabWidthMapRef,
+    setRouteIndexToTabOffsetMap,
+    navigationState.routes.length
+  );
 
   const data: NonNullable<FlatListProps<Route>['data']> = useMemo(
     () => navigationState.routes,
@@ -54,8 +70,7 @@ const TabBar = React.memo((props: TabBarProps) => {
         const scene = { route };
         const focused = index === navigationState.index;
         const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-          const { width } = nativeEvent.layout;
-          routeIndexToTabWidthMapRef.current[index] = width;
+          handleTabBarItemLayout(index, nativeEvent.layout);
         };
         const handlePressTab = () => {
           onTabPress?.(scene);
@@ -136,10 +151,21 @@ const TabBar = React.memo((props: TabBarProps) => {
         onTabLongPress,
         tabBarItemStyle,
         labelStyle,
+        handleTabBarItemLayout,
         onTabPress,
         autoScrollToRouteIndex,
       ]
     );
+
+  const tabIndicatorComponent = useMemo(() => {
+    return (
+      <TabIndicator
+        animatedRouteIndex={animatedRouteIndex}
+        routeIndexToTabOffsetMap={routeIndexToTabOffsetMap}
+        style={indicatorStyle}
+      />
+    );
+  }, [animatedRouteIndex, routeIndexToTabOffsetMap, indicatorStyle]);
 
   return (
     <View style={styles.tabBarContainer}>
@@ -154,6 +180,7 @@ const TabBar = React.memo((props: TabBarProps) => {
         style={style}
         onScrollToIndexFailed={handleScrollToIndexFailed}
         contentContainerStyle={contentContainerStyle}
+        ListHeaderComponent={tabIndicatorComponent}
       />
     </View>
   );
