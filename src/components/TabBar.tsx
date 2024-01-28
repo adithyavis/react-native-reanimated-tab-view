@@ -8,13 +8,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import type { FlatListProps } from 'react-native';
 import type { Route } from '../types/common';
 import { View } from 'react-native';
-import { TAB_BAR_HEIGHT } from '../constants/tabBar';
 import TabBarItem from './TabBarItem';
 import { StyleSheet } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import { useTabBarAutoScroll } from '../hooks/useTabBarAutoScroll';
 import TabIndicator from './TabIndicator';
 import { useHandleTabBarItemLayout } from '../hooks/useTabBarItemLayout';
+import { TAB_BAR_HEIGHT, TAB_BAR_PADDING_VERTICAL } from '../constants/tabBar';
 
 const TabBar = React.memo((props: TabBarProps) => {
   const {
@@ -90,7 +90,7 @@ const TabBar = React.memo((props: TabBarProps) => {
                 jumpTo,
                 onTabPress: handlePressTab,
                 onTabLongPress,
-                style: tabBarItemStyle,
+                style: [styles.tabBarItem, tabBarItemStyle],
                 labelStyle,
               })}
             </View>
@@ -110,7 +110,7 @@ const TabBar = React.memo((props: TabBarProps) => {
                 jumpTo={jumpTo}
                 onTabPress={handlePressTab}
                 onTabLongPress={onTabLongPress}
-                style={[styles.scrollableTabBarItem, tabBarItemStyle]}
+                style={[styles.tabBarItem, tabBarItemStyle]}
                 labelStyle={labelStyle}
               />
             </View>
@@ -131,7 +131,7 @@ const TabBar = React.memo((props: TabBarProps) => {
               jumpTo={jumpTo}
               onTabPress={handlePressTab}
               onTabLongPress={onTabLongPress}
-              style={[_tabBarItemStyle, tabBarItemStyle]}
+              style={[styles.tabBarItem, _tabBarItemStyle, tabBarItemStyle]}
               labelStyle={labelStyle}
             />
           </View>
@@ -168,7 +168,13 @@ const TabBar = React.memo((props: TabBarProps) => {
   }, [animatedRouteIndex, routeIndexToTabOffsetMap, indicatorStyle]);
 
   return (
-    <View style={styles.tabBarContainer}>
+    <View
+      style={[
+        styles.tabBarContainer,
+        scrollEnabled && styles.scrollableTabBarContainer,
+        style,
+      ]}
+    >
       <FlatList
         ref={flatListRef}
         horizontal
@@ -177,9 +183,8 @@ const TabBar = React.memo((props: TabBarProps) => {
         bounces={bounces}
         scrollEnabled={scrollEnabled}
         showsHorizontalScrollIndicator={false}
-        style={style}
-        onScrollToIndexFailed={handleScrollToIndexFailed}
         contentContainerStyle={contentContainerStyle}
+        onScrollToIndexFailed={handleScrollToIndexFailed}
         ListHeaderComponent={tabIndicatorComponent}
       />
     </View>
@@ -189,14 +194,18 @@ export default TabBar;
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    height: TAB_BAR_HEIGHT,
     backgroundColor: '#25A0F6',
+  },
+  scrollableTabBarContainer: {
+    height: TAB_BAR_HEIGHT,
   },
   tabBarItemContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
-  scrollableTabBarItem: {
-    paddingHorizontal: 30,
+  tabBarItem: {
+    paddingHorizontal: 10,
+    paddingVertical: TAB_BAR_PADDING_VERTICAL,
   },
 });

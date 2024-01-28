@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
   tabBarItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
   },
   activeLabel: {
     color: DEFAULT_ACTIVE_COLOR,
