@@ -213,7 +213,10 @@ export const useCarouselJumpToIndex = (
 
       updateCurrentRouteIndex(routeIndexToJumpTo);
 
-      animatedRouteIndex.value = routeIndexToJumpTo;
+      animatedRouteIndex.value = withTiming(routeIndexToJumpTo, {
+        duration: AUTO_SWIPE_COMPLETION_DURATION,
+        easing: Easing.ease,
+      });
 
       swipeTranslationX.value = withTiming(
         -routeIndexToJumpTo * sceneContainerWidth,
