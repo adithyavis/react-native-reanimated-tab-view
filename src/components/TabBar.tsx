@@ -19,6 +19,7 @@ import { TAB_BAR_HEIGHT, TAB_BAR_PADDING_VERTICAL } from '../constants/tabBar';
 const TabBar = React.memo((props: TabBarProps) => {
   const {
     navigationState,
+    routeIndex,
     scrollEnabled = false,
     bounces,
     layout,
@@ -46,7 +47,7 @@ const TabBar = React.memo((props: TabBarProps) => {
   const { autoScrollToRouteIndex, handleScrollToIndexFailed } =
     useTabBarAutoScroll(
       flatListRef,
-      navigationState,
+      routeIndex,
       routeIndexToTabWidthMapRef,
       routeIndexToTabOffsetMap,
       layout

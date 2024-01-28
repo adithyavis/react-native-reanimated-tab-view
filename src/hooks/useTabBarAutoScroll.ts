@@ -1,5 +1,5 @@
 import type { FlatList } from 'react-native-gesture-handler';
-import type { Layout, NavigationState } from '../types/common';
+import type { Layout } from '../types/common';
 import { useCallback, type MutableRefObject, type RefObject } from 'react';
 import { useStateUpdatesListener } from './useStateUpdatesListener';
 import type {
@@ -9,7 +9,7 @@ import type {
 
 export const useTabBarAutoScroll = (
   flatListRef: RefObject<FlatList>,
-  navigationState: NavigationState,
+  routeIndex: number,
   routeIndexToTabWidthMapRef: MutableRefObject<RouteIndexToTabWidthMap>,
   routeIndexToTabOffsetMap: RouteIndexToTabOffsetMap,
   layout: Layout
@@ -24,10 +24,10 @@ export const useTabBarAutoScroll = (
   );
 
   useStateUpdatesListener(
-    navigationState.index,
+    routeIndex,
     useCallback(() => {
-      autoScrollToRouteIndex(navigationState.index);
-    }, [autoScrollToRouteIndex, navigationState.index])
+      autoScrollToRouteIndex(routeIndex);
+    }, [autoScrollToRouteIndex, routeIndex])
   );
 
   const handleScrollToIndexFailed = useCallback(

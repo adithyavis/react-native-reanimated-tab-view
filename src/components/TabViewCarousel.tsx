@@ -19,7 +19,6 @@ import {
   useCarouselSwipeTranslationAnimatedStyle,
 } from '../hooks/useCarouselSwipe';
 import { useCarouselRouteIndices } from '../hooks/useCarousel';
-import { useStateUpdatesListener } from '../hooks/useStateUpdatesListener';
 import { Keyboard } from 'react-native';
 
 export type CarouselImperativeHandle = {
@@ -117,22 +116,6 @@ const TabViewCarousel = React.memo(
         jumpToRoute,
       }),
       [jumpToRoute]
-    );
-
-    useStateUpdatesListener(
-      navigationState.index,
-      useCallback(() => {
-        updateCurrentRouteIndex(navigationState.index);
-        const routeToJumpTo = navigationState.routes[navigationState.index];
-        if (routeToJumpTo) {
-          jumpToRoute(routeToJumpTo.key);
-        }
-      }, [
-        jumpToRoute,
-        navigationState.index,
-        navigationState.routes,
-        updateCurrentRouteIndex,
-      ])
     );
 
     const { smallestRouteIndexToRender, largestRouteIndexToRender } =

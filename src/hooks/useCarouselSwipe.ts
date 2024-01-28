@@ -12,8 +12,6 @@ import {
   withTiming,
   Easing,
   useAnimatedStyle,
-  withDelay,
-  runOnUI,
 } from 'react-native-reanimated';
 import { AUTO_SWIPE_COMPLETION_DURATION } from '../constants/carousel';
 import type { Route } from '../types/common';

@@ -8,6 +8,7 @@ import type { TabBarItemProps } from './TabBarItem';
 export type TabBarProps = Omit<ViewProps, 'children'> &
   SceneRendererProps & {
     navigationState: NavigationState;
+    routeIndex: number;
     scrollEnabled?: boolean;
     bounces?: boolean;
     activeColor?: string;

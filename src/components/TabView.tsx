@@ -49,10 +49,23 @@ export const TabView = React.memo((props: TabViewProps) => {
 
   const animatedRouteIndex = useSharedValue(navigationState.index);
 
+  const [currentRouteIndex, setCurrentRouteIndex] = useState(
+    navigationState.index
+  );
+
+  const handleIndexChange = useCallback(
+    (index: number) => {
+      setCurrentRouteIndex(index);
+      onIndexChange?.(index);
+    },
+    [onIndexChange]
+  );
+
   const tabBar = useMemo(() => {
     if (renderTabBar) {
       return renderTabBar({
         navigationState,
+        routeIndex: currentRouteIndex,
         animatedRouteIndex,
         layout,
         jumpTo,
@@ -63,6 +76,7 @@ export const TabView = React.memo((props: TabViewProps) => {
     return (
       <TabBar
         layout={layout}
+        routeIndex={currentRouteIndex}
         animatedRouteIndex={animatedRouteIndex}
         jumpTo={jumpTo}
         getLabelText={(scene) => scene.route.title}
@@ -70,7 +84,14 @@ export const TabView = React.memo((props: TabViewProps) => {
         scrollEnabled={true}
       />
     );
-  }, [renderTabBar, layout, animatedRouteIndex, jumpTo, navigationState]);
+  }, [
+    renderTabBar,
+    layout,
+    currentRouteIndex,
+    animatedRouteIndex,
+    jumpTo,
+    navigationState,
+  ]);
 
   return (
     <View
@@ -85,7 +106,7 @@ export const TabView = React.memo((props: TabViewProps) => {
         animatedRouteIndex={animatedRouteIndex}
         renderScene={renderScene}
         sceneContainerStyle={sceneContainerStyle}
-        onIndexChange={onIndexChange}
+        onIndexChange={handleIndexChange}
         layout={layout}
         keyboardDismissMode={keyboardDismissMode}
         swipeEnabled={swipeEnabled}
