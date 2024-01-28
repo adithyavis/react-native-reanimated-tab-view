@@ -12,15 +12,16 @@ import {
   withTiming,
   Easing,
   useAnimatedStyle,
+  withDelay,
+  runOnUI,
 } from 'react-native-reanimated';
 import { AUTO_SWIPE_COMPLETION_DURATION } from '../constants/carousel';
-import { useCarouselRouteIndices } from './useCarousel';
 import type { Route } from '../types/common';
 
 const ACTIVE_OFFSET_X = [-10, 10];
 
 export const useCarouselSwipePanGesture = (
-  currentRouteIndex: number,
+  currentRouteIndexSharedValue: SharedValue<number>,
   swipeTranslationX: SharedValue<number>,
   updateCurrentRouteIndex: (value: number) => void,
   sceneContainerWidth: number,
@@ -34,10 +35,8 @@ export const useCarouselSwipePanGesture = (
 ) => {
   const preSwipeStartSwipeTranslationX = useSharedValue(0);
 
-  const { minRouteIndex, maxRouteIndex } = useCarouselRouteIndices(
-    currentRouteIndex,
-    noOfRoutes
-  );
+  const minRouteIndex = 0;
+  const maxRouteIndex = noOfRoutes - 1;
   const minSwipeTranslationX = minRouteIndex * sceneContainerWidth;
   const maxSwipeTranslationX = maxRouteIndex * sceneContainerWidth;
 
@@ -80,6 +79,7 @@ export const useCarouselSwipePanGesture = (
             -swipeTranslationX.value / sceneContainerWidth;
         })
         .onEnd(({ translationX, velocityX }) => {
+          const currentRouteIndex = currentRouteIndexSharedValue.value;
           const shouldInertiallySnapBackToCurrentRouteIndex =
             Math.round(
               -(swipeTranslationX.value + velocityX) / sceneContainerWidth
@@ -126,6 +126,7 @@ export const useCarouselSwipePanGesture = (
             easing: Easing.out(Easing.ease),
           });
 
+          currentRouteIndexSharedValue.value = routeIndexToInertiallySnap;
           runOnJS(updateCurrentRouteIndex)(routeIndexToInertiallySnap);
           runOnJS(handleSwipeEnd)();
           runOnJS(handleSwipeAnimationEnd)(routeIndexToInertiallySnap);
@@ -139,7 +140,7 @@ export const useCarouselSwipePanGesture = (
       maxSwipeTranslationX,
       minSwipeTranslationX,
       animatedRouteIndex,
-      currentRouteIndex,
+      currentRouteIndexSharedValue,
       updateCurrentRouteIndex,
       handleSwipeEnd,
       handleSwipeAnimationEnd,
@@ -153,7 +154,7 @@ export const useCarouselSwipePanGesture = (
 
 export const useCarouselJumpToIndex = (
   routes: Route[],
-  currentRouteIndex: number,
+  currentRouteIndexSharedValue: SharedValue<number>,
   swipeTranslationX: SharedValue<number>,
   sceneContainerWidth: number,
   noOfRoutes: number,
@@ -164,10 +165,8 @@ export const useCarouselJumpToIndex = (
   setIsJumping: Dispatch<SetStateAction<boolean>>,
   animatedRouteIndex: SharedValue<number>
 ) => {
-  const { minRouteIndex, maxRouteIndex } = useCarouselRouteIndices(
-    currentRouteIndex,
-    noOfRoutes
-  );
+  const minRouteIndex = 0;
+  const maxRouteIndex = noOfRoutes - 1;
 
   const handleJumpAnimationEnd = useCallback(
     (prevRouteIndex: number) => {
@@ -183,6 +182,7 @@ export const useCarouselJumpToIndex = (
 
   const jumpToRoute = useCallback(
     (key: string) => {
+      const currentRouteIndex = currentRouteIndexSharedValue.value;
       const routeIndexToJumpTo = routes.findIndex((route) => route.key === key);
       /** Only jump if route is in between the min and max ranges,
        * and not equal to current route index
@@ -211,6 +211,7 @@ export const useCarouselJumpToIndex = (
           (tempRouteIndexToJumpTo - currentRouteIndex) * sceneContainerWidth;
       }
 
+      currentRouteIndexSharedValue.value = routeIndexToJumpTo;
       updateCurrentRouteIndex(routeIndexToJumpTo);
 
       animatedRouteIndex.value = withTiming(routeIndexToJumpTo, {
@@ -230,7 +231,7 @@ export const useCarouselJumpToIndex = (
     },
     [
       animatedRouteIndex,
-      currentRouteIndex,
+      currentRouteIndexSharedValue,
       handleJumpAnimationEnd,
       maxRouteIndex,
       minRouteIndex,

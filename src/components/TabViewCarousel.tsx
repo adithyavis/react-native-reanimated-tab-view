@@ -77,6 +77,7 @@ const TabViewCarousel = React.memo(
     const [currentRouteIndex, setCurrentRouteIndex] = useState(
       navigationState.index
     );
+    const currentRouteIndexSharedValue = useSharedValue(currentRouteIndex);
     const [prevRouteIndex, setPrevRouteIndex] = useState(currentRouteIndex);
     const updateCurrentRouteIndex = useCallback(
       (indexToUpdate: number) => {
@@ -98,7 +99,7 @@ const TabViewCarousel = React.memo(
 
     const jumpToRoute = useCarouselJumpToIndex(
       navigationState.routes,
-      currentRouteIndex,
+      currentRouteIndexSharedValue,
       swipeTranslationX,
       sceneContainerWidth,
       noOfRoutes,
@@ -138,7 +139,7 @@ const TabViewCarousel = React.memo(
       useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
 
     const swipePanGesture = useCarouselSwipePanGesture(
-      currentRouteIndex,
+      currentRouteIndexSharedValue,
       swipeTranslationX,
       updateCurrentRouteIndex,
       sceneContainerWidth,
