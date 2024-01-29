@@ -4,6 +4,7 @@ import type { StyleProp } from 'react-native';
 import type {
   Layout,
   NavigationState,
+  RenderMode,
   Route,
   SceneRendererProps,
 } from './common';
@@ -25,6 +26,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   style?: StyleProp<ViewStyle>;
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
+  mode?: RenderMode;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
 };

@@ -2,6 +2,7 @@ import type { SharedValue } from 'react-native-reanimated';
 import type {
   Layout,
   NavigationState,
+  RenderMode,
   Route,
   SceneRendererProps,
 } from './common';
@@ -22,6 +23,7 @@ export type TabViewCarouselProps = Omit<ViewProps, 'children'> & {
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
   smoothJump?: boolean;
+  mode?: RenderMode;
   animatedRouteIndex: SharedValue<number>;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;

@@ -22,8 +22,10 @@ export type Layout = {
   height: number;
 };
 
-export declare type SceneRendererProps = {
+export type SceneRendererProps = {
   layout: Layout;
   animatedRouteIndex: SharedValue<number>;
   jumpTo: (key: string) => void;
 };
+
+export type RenderMode = 'normal' | 'window' | 'lazy';

@@ -18,6 +18,7 @@ export const TabView = React.memo((props: TabViewProps) => {
     sceneContainerStyle,
     keyboardDismissMode,
     swipeEnabled,
+    mode = 'window',
     tabBarPosition = 'top',
     renderTabBar,
     renderScene,
@@ -101,6 +102,7 @@ export const TabView = React.memo((props: TabViewProps) => {
       {tabBarPosition === 'top' && tabBar}
       <TabViewCarousel
         ref={tabViewCarouselRef}
+        mode={mode}
         navigationState={navigationState}
         smoothJump={true}
         animatedRouteIndex={animatedRouteIndex}

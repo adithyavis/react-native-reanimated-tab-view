@@ -20,6 +20,8 @@ import {
 } from '../hooks/useCarouselSwipe';
 import { useCarouselRouteIndices } from '../hooks/useCarousel';
 import { Keyboard } from 'react-native';
+import { useCarouselLazyLoading } from '../hooks/useCarouselLazyLoading';
+import LazyLoader from './LazyLoader';
 
 export type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
@@ -31,6 +33,7 @@ const TabViewCarousel = React.memo(
       navigationState,
       renderScene,
       layout,
+      mode = 'window',
       onIndexChange,
       style,
       sceneContainerStyle,
@@ -76,6 +79,7 @@ const TabViewCarousel = React.memo(
     const [currentRouteIndex, setCurrentRouteIndex] = useState(
       navigationState.index
     );
+    const [initialRouteIndex] = useState(currentRouteIndex);
     const currentRouteIndexSharedValue = useSharedValue(currentRouteIndex);
     const [prevRouteIndex, setPrevRouteIndex] = useState(currentRouteIndex);
     const updateCurrentRouteIndex = useCallback(
@@ -95,6 +99,18 @@ const TabViewCarousel = React.memo(
     const prevRouteTranslationX = useSharedValue(0);
 
     const [isJumping, setIsJumping] = useState(false);
+
+    const { smallestRouteIndexToRender, largestRouteIndexToRender } =
+      useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
+
+    const { isLazyLoadingEnabled, handleSceneMount, computeShouldRenderRoute } =
+      useCarouselLazyLoading(
+        mode,
+        currentRouteIndexSharedValue,
+        smallestRouteIndexToRender,
+        largestRouteIndexToRender,
+        prevRouteIndex
+      );
 
     const jumpToRoute = useCarouselJumpToIndex(
       navigationState.routes,
@@ -117,9 +133,6 @@ const TabViewCarousel = React.memo(
       }),
       [jumpToRoute]
     );
-
-    const { smallestRouteIndexToRender, largestRouteIndexToRender } =
-      useCarouselRouteIndices(currentRouteIndex, noOfRoutes);
 
     const swipePanGesture = useCarouselSwipePanGesture(
       currentRouteIndexSharedValue,
@@ -149,32 +162,35 @@ const TabViewCarousel = React.memo(
       <GestureDetector gesture={swipePanGesture}>
         <View style={[styles.container, style]}>
           {navigationState.routes.map((route, index) => {
-            const shouldRender =
-              (index >= smallestRouteIndexToRender &&
-                index <= largestRouteIndexToRender) ||
-              index === prevRouteIndex;
+            const shouldRender = computeShouldRenderRoute(index);
             const renderOffset = index * sceneContainerWidth;
             if (!shouldRender) {
               return null;
             }
-            if (index === prevRouteIndex) {
-              return (
-                <Animated.View
-                  key={route.key}
-                  style={[
-                    styles.sceneContainer,
-                    styles.sceneContainerZIndex1,
-                    {
-                      left: renderOffset,
-                    },
-                    sceneContainerStyle,
-                    swipeTranslationAnimatedStyle,
-                  ]}
+            return (
+              <Animated.View
+                key={route.key}
+                style={[
+                  styles.sceneContainer,
+                  styles.sceneContainerZIndex1,
+                  {
+                    left: renderOffset,
+                  },
+                  sceneContainerStyle,
+                  swipeTranslationAnimatedStyle,
+                ]}
+              >
+                <LazyLoader
+                  isLazyLoadingEnabled={
+                    index !== initialRouteIndex && isLazyLoadingEnabled
+                  }
+                  onMount={() => handleSceneMount(index)}
                 >
                   <Animated.View
                     style={[
                       styles.prevRouteSceneWrapper,
-                      prevRouteTranslationAnimatedStyle,
+                      index === prevRouteIndex &&
+                        prevRouteTranslationAnimatedStyle,
                     ]}
                   >
                     {renderScene({
@@ -184,27 +200,7 @@ const TabViewCarousel = React.memo(
                       jumpTo: jumpToRoute,
                     })}
                   </Animated.View>
-                </Animated.View>
-              );
-            }
-            return (
-              <Animated.View
-                key={route.key}
-                style={[
-                  styles.sceneContainer,
-                  {
-                    left: renderOffset,
-                  },
-                  sceneContainerStyle,
-                  swipeTranslationAnimatedStyle,
-                ]}
-              >
-                {renderScene({
-                  layout,
-                  route,
-                  animatedRouteIndex,
-                  jumpTo: jumpToRoute,
-                })}
+                </LazyLoader>
               </Animated.View>
             );
           })}
