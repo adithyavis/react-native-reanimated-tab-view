@@ -8,10 +8,7 @@ import React, {
 import { View } from 'react-native';
 import type { TabViewCarouselProps } from '../types/TabViewCarousel';
 import { GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
 import {
   useCarouselJumpToIndex,
@@ -22,6 +19,7 @@ import { useCarouselRouteIndices } from '../hooks/useCarousel';
 import { Keyboard } from 'react-native';
 import { useCarouselLazyLoading } from '../hooks/useCarouselLazyLoading';
 import LazyLoader from './LazyLoader';
+import SceneWrapper from './SceneWrapper';
 
 export type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
@@ -77,11 +75,12 @@ const TabViewCarousel = React.memo(
     );
 
     const [initialRouteIndex] = useState(navigationState.index);
-    const [currentRouteIndex, setCurrentRouteIndex] = useState(
-      navigationState.index
-    );
-    const currentRouteIndexSharedValue = useSharedValue(currentRouteIndex);
-    const [prevRouteIndex, setPrevRouteIndex] = useState(currentRouteIndex);
+    const [currentRouteIndex, setCurrentRouteIndex] =
+      useState(initialRouteIndex);
+    const currentRouteIndexSharedValue = useSharedValue(initialRouteIndex);
+    const prevRouteIndexSharedValue = useSharedValue(initialRouteIndex);
+    const [prevRouteIndex, setPrevRouteIndex] = useState(initialRouteIndex);
+    const routeIndexToJumpToSharedValue = useSharedValue<number | null>(null);
     const updateCurrentRouteIndex = useCallback(
       (indexToUpdate: number) => {
         const prevCurrentRouteIndex = currentRouteIndex;
@@ -122,6 +121,8 @@ const TabViewCarousel = React.memo(
       updateCurrentRouteIndex,
       prevRouteTranslationX,
       setPrevRouteIndex,
+      prevRouteIndexSharedValue,
+      routeIndexToJumpToSharedValue,
       smoothJump,
       setIsJumping,
       animatedRouteIndex
@@ -145,19 +146,13 @@ const TabViewCarousel = React.memo(
       handleSwipeEnd,
       swipeEnabled,
       setPrevRouteIndex,
+      prevRouteIndexSharedValue,
       isJumping,
       animatedRouteIndex
     );
 
     const swipeTranslationAnimatedStyle =
       useCarouselSwipeTranslationAnimatedStyle(swipeTranslationX);
-
-    const prevRouteTranslationAnimatedStyle = useAnimatedStyle(
-      () => ({
-        transform: [{ translateX: prevRouteTranslationX.value }],
-      }),
-      [prevRouteTranslationX]
-    );
 
     return (
       <GestureDetector gesture={swipePanGesture}>
@@ -170,7 +165,6 @@ const TabViewCarousel = React.memo(
                 key={route.key}
                 style={[
                   styles.sceneContainer,
-                  styles.sceneContainerZIndex1,
                   {
                     left: renderOffset,
                   },
@@ -178,12 +172,11 @@ const TabViewCarousel = React.memo(
                   swipeTranslationAnimatedStyle,
                 ]}
               >
-                <Animated.View
-                  style={[
-                    styles.prevRouteSceneWrapper,
-                    index === prevRouteIndex &&
-                      prevRouteTranslationAnimatedStyle,
-                  ]}
+                <SceneWrapper
+                  routeIndex={index}
+                  prevRouteTranslationX={prevRouteTranslationX}
+                  prevRouteIndexSharedValue={prevRouteIndexSharedValue}
+                  routeIndexToJumpToSharedValue={routeIndexToJumpToSharedValue}
                 >
                   {shouldRender && (
                     <LazyLoader
@@ -200,7 +193,7 @@ const TabViewCarousel = React.memo(
                       })}
                     </LazyLoader>
                   )}
-                </Animated.View>
+                </SceneWrapper>
               </Animated.View>
             );
           })}
@@ -223,9 +216,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     zIndex: 0,
-  },
-  sceneContainerZIndex1: {
-    zIndex: 1,
   },
   prevRouteSceneWrapper: {
     width: '100%',

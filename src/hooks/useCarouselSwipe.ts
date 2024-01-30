@@ -28,6 +28,7 @@ export const useCarouselSwipePanGesture = (
   handleSwipeEnd: () => void,
   _swipeEnabled = true,
   setPrevRouteIndex: (index: number) => void,
+  prevRouteIndexSharedValue: SharedValue<number>,
   isJumping: boolean,
   animatedRouteIndex: SharedValue<number>
 ) => {
@@ -41,15 +42,6 @@ export const useCarouselSwipePanGesture = (
   const swipeEnabled = useMemo(
     () => !isJumping && _swipeEnabled,
     [_swipeEnabled, isJumping]
-  );
-
-  const handleSwipeAnimationEnd = useCallback(
-    (prevRouteIndex: number) => {
-      setTimeout(() => {
-        setPrevRouteIndex(prevRouteIndex);
-      }, AUTO_SWIPE_COMPLETION_DURATION);
-    },
-    [setPrevRouteIndex]
   );
 
   const swipePanGesture = useMemo(
@@ -112,22 +104,26 @@ export const useCarouselSwipePanGesture = (
               currentRouteIndex + 1
             );
           }
-          swipeTranslationX.value = withTiming(
-            -routeIndexToInertiallySnap * sceneContainerWidth,
-            {
-              duration: AUTO_SWIPE_COMPLETION_DURATION,
-              easing: Easing.out(Easing.ease),
-            }
-          );
           animatedRouteIndex.value = withTiming(routeIndexToInertiallySnap, {
             duration: AUTO_SWIPE_COMPLETION_DURATION,
             easing: Easing.out(Easing.ease),
           });
 
+          swipeTranslationX.value = withTiming(
+            -routeIndexToInertiallySnap * sceneContainerWidth,
+            {
+              duration: AUTO_SWIPE_COMPLETION_DURATION,
+              easing: Easing.out(Easing.ease),
+            },
+            () => {
+              prevRouteIndexSharedValue.value = routeIndexToInertiallySnap;
+              runOnJS(setPrevRouteIndex)(routeIndexToInertiallySnap);
+            }
+          );
+
           currentRouteIndexSharedValue.value = routeIndexToInertiallySnap;
           runOnJS(updateCurrentRouteIndex)(routeIndexToInertiallySnap);
           runOnJS(handleSwipeEnd)();
-          runOnJS(handleSwipeAnimationEnd)(routeIndexToInertiallySnap);
         }),
     [
       swipeEnabled,
@@ -141,9 +137,9 @@ export const useCarouselSwipePanGesture = (
       currentRouteIndexSharedValue,
       updateCurrentRouteIndex,
       handleSwipeEnd,
-      handleSwipeAnimationEnd,
-      minRouteIndex,
       maxRouteIndex,
+      prevRouteIndexSharedValue,
+      setPrevRouteIndex,
     ]
   );
 
@@ -159,24 +155,14 @@ export const useCarouselJumpToIndex = (
   updateCurrentRouteIndex: (value: number) => void,
   prevRouteTranslationX: SharedValue<number>,
   setPrevRouteIndex: (value: number) => void,
+  prevRouteIndexSharedValue: SharedValue<number>,
+  routeIndexToJumpToSharedValue: SharedValue<number | null>,
   smoothJump: boolean,
   setIsJumping: Dispatch<SetStateAction<boolean>>,
   animatedRouteIndex: SharedValue<number>
 ) => {
   const minRouteIndex = 0;
   const maxRouteIndex = noOfRoutes - 1;
-
-  const handleJumpAnimationEnd = useCallback(
-    (prevRouteIndex: number) => {
-      setTimeout(() => {
-        setPrevRouteIndex(prevRouteIndex);
-        prevRouteTranslationX.value = 0;
-
-        setIsJumping(false);
-      }, AUTO_SWIPE_COMPLETION_DURATION);
-    },
-    [prevRouteTranslationX, setIsJumping, setPrevRouteIndex]
-  );
 
   const jumpToRoute = useCallback(
     (key: string) => {
@@ -195,6 +181,7 @@ export const useCarouselJumpToIndex = (
       }
 
       setIsJumping(true);
+      routeIndexToJumpToSharedValue.value = routeIndexToJumpTo;
 
       if (smoothJump) {
         const shouldJumpLeft = routeIndexToJumpTo > currentRouteIndex;
@@ -222,21 +209,27 @@ export const useCarouselJumpToIndex = (
         {
           duration: AUTO_SWIPE_COMPLETION_DURATION,
           easing: Easing.ease,
+        },
+        () => {
+          routeIndexToJumpToSharedValue.value = null;
+          prevRouteIndexSharedValue.value = routeIndexToJumpTo;
+          prevRouteTranslationX.value = 0;
+          runOnJS(setPrevRouteIndex)(routeIndexToJumpTo);
+          runOnJS(setIsJumping)(false);
         }
       );
-
-      handleJumpAnimationEnd(routeIndexToJumpTo);
     },
     [
       animatedRouteIndex,
       currentRouteIndexSharedValue,
-      handleJumpAnimationEnd,
       maxRouteIndex,
-      minRouteIndex,
+      prevRouteIndexSharedValue,
       prevRouteTranslationX,
+      routeIndexToJumpToSharedValue,
       routes,
       sceneContainerWidth,
       setIsJumping,
+      setPrevRouteIndex,
       smoothJump,
       swipeTranslationX,
       updateCurrentRouteIndex,
