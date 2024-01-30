@@ -15,6 +15,19 @@ import {
   TabView as TabView,
   TabBar as ReactNavigationTabBar,
 } from 'react-native-tab-view';
+import converter from 'number-to-words';
+
+const randomColor = (() => {
+  const randomInt = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+  return () => {
+    const h = randomInt(0, 360);
+    const s = randomInt(42, 98);
+    const l = randomInt(40, 90);
+    return `hsl(${h},${s}%,${l}%)`;
+  };
+})();
 
 const { width: windowWidth } = Dimensions.get('window');
 const initialTabViewLayout = {
@@ -27,21 +40,6 @@ const Scene = ({ backgroundColor }: { backgroundColor: string }) => {
   // }, []);
   return <View style={[styles.scene, { backgroundColor }]} />;
 };
-
-const randomColor = (() => {
-  'use strict';
-
-  const randomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  return () => {
-    const h = randomInt(0, 360);
-    const s = randomInt(42, 98);
-    const l = randomInt(40, 90);
-    return `hsl(${h},${s}%,${l}%)`;
-  };
-})();
 
 export default function App() {
   const initialTabIndex = React.useMemo(() => 0, []);
@@ -63,7 +61,7 @@ export default function App() {
       index: initialTabIndex,
       routes: [...Array(20).keys()].map((i) => ({
         key: `tab${i}`,
-        title: `Tab ${i}`,
+        title: `Tab ${converter.toWords(i + 1)}`,
         color: randomColor(),
       })),
     }
