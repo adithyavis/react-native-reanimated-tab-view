@@ -1,31 +1,86 @@
-# react-native-reanimated-tab-view
+# React Native Reanimated Tab View
 
-Tab view component implemented using Reanimated 2
+A Tab View component implemented using [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/). Almost entirely inter-compatible with [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view)
+
+- The [example/](https://github.com/adithyavis/react-native-reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
+
+## Demo
+
+<a href="https://github.com/adithyavis/react-native-reanimated-tab-view/raw/main/assets/assets_demo.mp4"><img src="https://github.com/adithyavis/react-native-reanimated-tab-view/raw/main/assets/assets_demo.gif" width="360"></a>
+
+## Features
+
+react-native-reanimated-tab-view provides the following features that are provided by react-native-tab-view
+
+> - Smooth animations and gestures
+> - Scrollable tabs
+> - Supports both top and bottom tab bars
+> - Follows Material Design spec
+> - Highly customizable
+> - Fully typed with [TypeScript](https://typescriptlang.org)
+
+Additionally, react-native-reanimated-tab-view also provides the following additional features
+
+> - 3 modes to render the tab view ("normal", "window" and "lazy")
+> - Dynamic widths for tabs
+
+## Motivation
 
 ## Installation
 
+Install react-native-reanimated (>=2.x) and react-native-gesture-handler (>=2.x).
+
+- https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/installation
+- https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation
+
+Open a Terminal in the project root and run:
+
 ```sh
-npm install react-native-reanimated-tab-view
+yarn add react-native-reanimated-tab-view
 ```
 
-## Usage
+## Quick Start
 
 ```js
-import { multiply } from 'react-native-reanimated-tab-view';
+import * as React from 'react';
+import { View, useWindowDimensions } from 'react-native';
+import { TabView } from 'react-native-reanimated-tab-view';
 
-// ...
+const FirstRoute = () => (
+  <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
+);
 
-const result = await multiply(3, 7);
+const SecondRoute = () => (
+  <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
+);
+
+const renderScene = ({ route }) => {
+  switch (route.key) {
+    case 'first':
+      return <FirstRoute />;
+    case 'second':
+      return <SecondRoute />;
+    default:
+      return null;
+  }
+};
+
+export default function TabViewExample() {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'First' },
+    { key: 'second', title: 'Second' },
+  ]);
+
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+    />
+  );
+}
 ```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
