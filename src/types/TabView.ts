@@ -21,6 +21,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
   renderTabBar?: (props: TabBarProps) => React.ReactNode;
   tabBarPosition?: 'top' | 'bottom';
+  smoothJump?: boolean;
   initialLayout?: Partial<Layout>;
   sceneContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;

@@ -23,6 +23,7 @@ Additionally, react-native-reanimated-tab-view also provides the following featu
 
 > - 3 modes to render the tab view ("normal", "window" and "lazy")
 > - Dynamic widths for tabs
+> - Customisable jump animations (smooth jump or scroll jump)
 
 #### Upcoming features
 
