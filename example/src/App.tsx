@@ -95,7 +95,6 @@ export default function App() {
           />
         ) : (
           <TabView
-            lazy
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
             renderScene={renderScene}

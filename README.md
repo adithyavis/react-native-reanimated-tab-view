@@ -19,12 +19,28 @@ react-native-reanimated-tab-view provides the following features that are provid
 > - Highly customizable
 > - Fully typed with [TypeScript](https://typescriptlang.org)
 
-Additionally, react-native-reanimated-tab-view also provides the following additional features
+Additionally, react-native-reanimated-tab-view also provides the following features
 
 > - 3 modes to render the tab view ("normal", "window" and "lazy")
 > - Dynamic widths for tabs
 
+#### Upcoming features
+
+> - Accessibility
+> - RTL support
+> - TabView collapsible Headers
+
 ## Motivation
+
+[`react-native-tab-view`](https://github.com/satya164/react-native-tab-view) is an amazing package,
+but the dependency on [`react-native-pager-view`](https://github.com/callstack/react-native-pager-view)
+complicates solving issues such as
+
+- [`TabView tab index not really controlled`](https://github.com/react-navigation/react-navigation/issues/11412)
+- [`Tab label aligning vertically in some devices when render single tab.`](https://github.com/react-navigation/react-navigation/issues/11083)
+- [`Screen getting stuck when switching between the tabs while keyboard opened.`](https://github.com/react-navigation/react-navigation/issues/11301)
+
+The animation and gesture primitives offered by [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/) help in making swipe and jump behaviors of TabView more controllable.
 
 ## Installation
 
