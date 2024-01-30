@@ -182,6 +182,7 @@ const TabBar = React.memo((props: TabBarProps) => {
         data={data}
         renderItem={renderItem}
         bounces={bounces}
+        removeClippedSubviews={false}
         scrollEnabled={scrollEnabled}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={contentContainerStyle}
