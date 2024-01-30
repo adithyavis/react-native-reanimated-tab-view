@@ -174,6 +174,7 @@ const TabViewCarousel = React.memo(
               >
                 <SceneWrapper
                   routeIndex={index}
+                  smoothJump={smoothJump}
                   prevRouteTranslationX={prevRouteTranslationX}
                   prevRouteIndexSharedValue={prevRouteIndexSharedValue}
                   routeIndexToJumpToSharedValue={routeIndexToJumpToSharedValue}

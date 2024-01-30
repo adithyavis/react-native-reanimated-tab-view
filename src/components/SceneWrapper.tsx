@@ -7,6 +7,7 @@ import Animated, {
 
 type SceneWrapperProps = {
   routeIndex: number;
+  smoothJump: boolean;
   prevRouteIndexSharedValue: SharedValue<number>;
   prevRouteTranslationX: SharedValue<number>;
   routeIndexToJumpToSharedValue: SharedValue<number | null>;
@@ -15,12 +16,16 @@ type SceneWrapperProps = {
 const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(
   ({
     routeIndex,
+    smoothJump,
     prevRouteIndexSharedValue,
     prevRouteTranslationX,
     routeIndexToJumpToSharedValue,
     children,
   }) => {
     const sceneWrapperAnimatedStyle = useAnimatedStyle(() => {
+      if (!smoothJump) {
+        return { transform: [{ translateX: 0 }], opacity: 1 };
+      }
       const isPrevRoute = routeIndex === prevRouteIndexSharedValue.value;
       const isInBetweenPrevAndJumpRoute =
         routeIndexToJumpToSharedValue.value == null
@@ -41,7 +46,7 @@ const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(
         ],
         opacity: !isInBetweenPrevAndJumpRoute ? 1 : 0,
       };
-    }, [routeIndex, prevRouteTranslationX]);
+    }, [routeIndex, smoothJump, prevRouteTranslationX]);
     return (
       <Animated.View
         style={[styles.prevRouteSceneWrapper, sceneWrapperAnimatedStyle]}
