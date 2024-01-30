@@ -76,10 +76,10 @@ const TabViewCarousel = React.memo(
       [navigationState.routes.length]
     );
 
+    const [initialRouteIndex] = useState(navigationState.index);
     const [currentRouteIndex, setCurrentRouteIndex] = useState(
       navigationState.index
     );
-    const [initialRouteIndex] = useState(currentRouteIndex);
     const currentRouteIndexSharedValue = useSharedValue(currentRouteIndex);
     const [prevRouteIndex, setPrevRouteIndex] = useState(currentRouteIndex);
     const updateCurrentRouteIndex = useCallback(
@@ -106,6 +106,7 @@ const TabViewCarousel = React.memo(
     const { isLazyLoadingEnabled, handleSceneMount, computeShouldRenderRoute } =
       useCarouselLazyLoading(
         mode,
+        initialRouteIndex,
         currentRouteIndexSharedValue,
         smallestRouteIndexToRender,
         largestRouteIndexToRender,
@@ -164,9 +165,6 @@ const TabViewCarousel = React.memo(
           {navigationState.routes.map((route, index) => {
             const shouldRender = computeShouldRenderRoute(index);
             const renderOffset = index * sceneContainerWidth;
-            if (!shouldRender) {
-              return null;
-            }
             return (
               <Animated.View
                 key={route.key}
@@ -180,27 +178,29 @@ const TabViewCarousel = React.memo(
                   swipeTranslationAnimatedStyle,
                 ]}
               >
-                <LazyLoader
-                  isLazyLoadingEnabled={
-                    index !== initialRouteIndex && isLazyLoadingEnabled
-                  }
-                  onMount={() => handleSceneMount(index)}
+                <Animated.View
+                  style={[
+                    styles.prevRouteSceneWrapper,
+                    index === prevRouteIndex &&
+                      prevRouteTranslationAnimatedStyle,
+                  ]}
                 >
-                  <Animated.View
-                    style={[
-                      styles.prevRouteSceneWrapper,
-                      index === prevRouteIndex &&
-                        prevRouteTranslationAnimatedStyle,
-                    ]}
-                  >
-                    {renderScene({
-                      layout,
-                      route,
-                      animatedRouteIndex,
-                      jumpTo: jumpToRoute,
-                    })}
-                  </Animated.View>
-                </LazyLoader>
+                  {shouldRender && (
+                    <LazyLoader
+                      isLazyLoadingEnabled={
+                        index !== initialRouteIndex && isLazyLoadingEnabled
+                      }
+                      onMount={() => handleSceneMount(index)}
+                    >
+                      {renderScene({
+                        layout,
+                        route,
+                        animatedRouteIndex,
+                        jumpTo: jumpToRoute,
+                      })}
+                    </LazyLoader>
+                  )}
+                </Animated.View>
               </Animated.View>
             );
           })}

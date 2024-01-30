@@ -8,6 +8,7 @@ import {
 
 export const useCarouselLazyLoading = (
   mode: RenderMode,
+  initialRouteIndex: number,
   currentRouteIndexSharedValue: SharedValue<number>,
   smallestRouteIndexToRender: number,
   largestRouteIndexToRender: number,
@@ -15,7 +16,7 @@ export const useCarouselLazyLoading = (
 ) => {
   const [lazyLoadedRouteIndices, setLazyLoadedRouteIndices] = useState<
     number[]
-  >([]);
+  >([initialRouteIndex]);
 
   const appendTolazyLoadedRouteIndices = useCallback((index: number) => {
     setLazyLoadedRouteIndices((prev) => {
