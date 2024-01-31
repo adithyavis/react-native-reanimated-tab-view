@@ -6,7 +6,8 @@
     "start": "expo start -c",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "web-build": "expo export:web"
   },
   "dependencies": {
     "expo": "~49.0.15",
@@ -22,7 +23,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@expo/webpack-config": "^19.0.0",
+    "@expo/webpack-config": "^18.0.1",
     "@types/number-to-words": "^1.2.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-module-resolver": "^5.0.0"

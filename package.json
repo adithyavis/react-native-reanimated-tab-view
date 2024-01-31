@@ -32,6 +32,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "bob build",
+    "web-build": "yarn workspace react-native-reanimated-tab-view-example web-build",
     "release": "release-it"
   },
   "keywords": [
