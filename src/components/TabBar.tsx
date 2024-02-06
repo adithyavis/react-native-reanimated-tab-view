@@ -14,7 +14,7 @@ import Tab from './Tab';
 const TabBar = React.memo((props: TabBarProps) => {
   const {
     navigationState,
-    routeIndex,
+    routeIndex: currentRouteIndex,
     scrollEnabled = false,
     bounces,
     layout,
@@ -37,7 +37,7 @@ const TabBar = React.memo((props: TabBarProps) => {
   const flatListRef = useRef<FlatList>(null);
 
   const { autoScrollToRouteIndex, handleScrollToIndexFailed } =
-    useTabBarAutoScroll(flatListRef, routeIndex, layout);
+    useTabBarAutoScroll(flatListRef, currentRouteIndex, layout);
 
   const data: NonNullable<FlatListProps<Route>['data']> = useMemo(
     () => navigationState.routes,
@@ -46,23 +46,23 @@ const TabBar = React.memo((props: TabBarProps) => {
 
   const renderItem: NonNullable<FlatListProps<Route>['renderItem']> =
     useCallback(
-      ({ item, index }) => {
+      ({ item, index: routeIndex }) => {
         const route = item;
         const scene = { route };
-        const focused = index === navigationState.index;
+        const focused = routeIndex === navigationState.index;
         const handlePressTab = () => {
           onTabPress?.(scene);
-          autoScrollToRouteIndex(index);
+          autoScrollToRouteIndex(routeIndex);
         };
         if (renderTabBarItem) {
           return (
             <Tab
-              index={index}
+              index={routeIndex}
               noOfRoutes={navigationState.routes.length}
               style={styles.tab}
             >
               {renderTabBarItem({
-                index,
+                index: routeIndex,
                 route,
                 focused,
                 activeColor,
@@ -81,12 +81,12 @@ const TabBar = React.memo((props: TabBarProps) => {
         if (scrollEnabled) {
           return (
             <Tab
-              index={index}
+              index={routeIndex}
               noOfRoutes={navigationState.routes.length}
               style={styles.tab}
             >
               <TabBarItem
-                index={index}
+                index={routeIndex}
                 route={route}
                 focused={focused}
                 activeColor={activeColor}
@@ -106,12 +106,12 @@ const TabBar = React.memo((props: TabBarProps) => {
         const _tabStyle = { width };
         return (
           <Tab
-            index={index}
+            index={routeIndex}
             noOfRoutes={navigationState.routes.length}
             style={[styles.tab, _tabStyle]}
           >
             <TabBarItem
-              index={index}
+              index={routeIndex}
               route={route}
               focused={focused}
               animatedRouteIndex={animatedRouteIndex}
