@@ -7,6 +7,7 @@ import type {
   RenderMode,
   Route,
   SceneRendererProps,
+  TabBarType,
 } from './common';
 import type { TabBarProps } from './TabBar';
 
@@ -28,6 +29,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
   mode?: RenderMode;
+  type?: TabBarType;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
 };

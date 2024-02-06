@@ -20,6 +20,7 @@ export const TabView = React.memo((props: TabViewProps) => {
     keyboardDismissMode,
     swipeEnabled,
     mode = 'window',
+    type = 'secondary',
     tabBarPosition = 'top',
     smoothJump = true,
     renderTabBar,
@@ -74,6 +75,7 @@ export const TabView = React.memo((props: TabViewProps) => {
         jumpTo,
         getLabelText: (scene) => scene.route.title,
         scrollEnabled: true,
+        type,
       });
     }
     return (
@@ -84,7 +86,8 @@ export const TabView = React.memo((props: TabViewProps) => {
         jumpTo={jumpTo}
         getLabelText={(scene) => scene.route.title}
         navigationState={navigationState}
-        scrollEnabled={false}
+        scrollEnabled={true}
+        type={type}
       />
     );
   }, [
@@ -94,6 +97,7 @@ export const TabView = React.memo((props: TabViewProps) => {
     animatedRouteIndex,
     jumpTo,
     navigationState,
+    type,
   ]);
 
   return (
