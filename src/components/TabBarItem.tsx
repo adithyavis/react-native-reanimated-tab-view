@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import type { TabBarItemProps } from '../types/TabBarItem';
 import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { useHandleTabBarItemLayout } from '../hooks/useTabLayout';
 
 const DEFAULT_ACTIVE_COLOR = 'rgba(255, 255, 255, 1)';
 const DEFAULT_INACTIVE_COLOR = 'rgba(255, 255, 255, 0.7)';
@@ -21,6 +22,8 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
     labelStyle,
     style,
   } = props;
+
+  const { handleTabBarItemLayout } = useHandleTabBarItemLayout(index);
 
   const handlePressTabItem = useCallback(() => {
     const scene = { route };
@@ -86,6 +89,7 @@ const TabBarItem = React.memo((props: TabBarItemProps) => {
     <TouchableOpacity
       onPress={handlePressTabItem}
       onLongPress={handleLongPressTabItem}
+      onLayout={handleTabBarItemLayout}
       style={[styles.tabBarItem, style]}
     >
       {activeLabel}
@@ -102,9 +106,11 @@ const styles = StyleSheet.create({
   },
   activeLabel: {
     color: DEFAULT_ACTIVE_COLOR,
+    width: '100%',
   },
   inactiveLabel: {
     position: 'absolute',
     color: DEFAULT_INACTIVE_COLOR,
+    width: '100%',
   },
 });

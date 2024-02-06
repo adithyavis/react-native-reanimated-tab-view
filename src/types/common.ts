@@ -28,4 +28,6 @@ export type SceneRendererProps = {
   jumpTo: (key: string) => void;
 };
 
+export type TabBarType = 'primary' | 'secondary';
+
 export type RenderMode = 'normal' | 'window' | 'lazy';

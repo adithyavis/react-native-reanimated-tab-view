@@ -1,5 +1,10 @@
 import type { ViewProps } from 'react-native';
-import type { NavigationState, Scene, SceneRendererProps } from './common';
+import type {
+  NavigationState,
+  Scene,
+  SceneRendererProps,
+  TabBarType,
+} from './common';
 import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
 import type { TextStyle } from 'react-native';
@@ -13,6 +18,7 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
     bounces?: boolean;
     activeColor?: string;
     inactiveColor?: string;
+    type?: TabBarType;
     getLabelText?: (scene: Scene) => string | undefined;
     renderTabBarItem?: (props: TabBarItemProps) => React.ReactNode;
     onTabPress?: (scene: Scene) => void;
@@ -24,6 +30,10 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
   };
 
 export type RouteIndexToTabWidthMap = {
+  [key: number]: number;
+};
+
+export type RouteIndexToTabBarItemWidthMap = {
   [key: number]: number;
 };
 

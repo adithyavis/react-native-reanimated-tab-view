@@ -10,6 +10,7 @@ import type { Layout } from '../types/common';
 import { useSharedValue } from 'react-native-reanimated';
 import TabBar from './TabBar';
 import { StyleSheet } from 'react-native';
+import { TabLayoutContextProvider } from '../providers/TabLayout';
 
 export const TabView = React.memo((props: TabViewProps) => {
   const {
@@ -83,7 +84,7 @@ export const TabView = React.memo((props: TabViewProps) => {
         jumpTo={jumpTo}
         getLabelText={(scene) => scene.route.title}
         navigationState={navigationState}
-        scrollEnabled={true}
+        scrollEnabled={false}
       />
     );
   }, [
@@ -96,28 +97,30 @@ export const TabView = React.memo((props: TabViewProps) => {
   ]);
 
   return (
-    <View
-      style={[styles.containerLayout, containerLayoutStyle]}
-      onLayout={onLayout}
-    >
-      {tabBarPosition === 'top' && tabBar}
-      <TabViewCarousel
-        ref={tabViewCarouselRef}
-        mode={mode}
-        navigationState={navigationState}
-        smoothJump={smoothJump}
-        animatedRouteIndex={animatedRouteIndex}
-        renderScene={renderScene}
-        sceneContainerStyle={sceneContainerStyle}
-        onIndexChange={handleIndexChange}
-        layout={layout}
-        keyboardDismissMode={keyboardDismissMode}
-        swipeEnabled={swipeEnabled}
-        onSwipeEnd={onSwipeEnd}
-        onSwipeStart={onSwipeStart}
-      />
-      {tabBarPosition === 'bottom' && tabBar}
-    </View>
+    <TabLayoutContextProvider>
+      <View
+        style={[styles.containerLayout, containerLayoutStyle]}
+        onLayout={onLayout}
+      >
+        {tabBarPosition === 'top' && tabBar}
+        <TabViewCarousel
+          ref={tabViewCarouselRef}
+          mode={mode}
+          navigationState={navigationState}
+          smoothJump={smoothJump}
+          animatedRouteIndex={animatedRouteIndex}
+          renderScene={renderScene}
+          sceneContainerStyle={sceneContainerStyle}
+          onIndexChange={handleIndexChange}
+          layout={layout}
+          keyboardDismissMode={keyboardDismissMode}
+          swipeEnabled={swipeEnabled}
+          onSwipeEnd={onSwipeEnd}
+          onSwipeStart={onSwipeStart}
+        />
+        {tabBarPosition === 'bottom' && tabBar}
+      </View>
+    </TabLayoutContextProvider>
   );
 });
 

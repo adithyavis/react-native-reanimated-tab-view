@@ -1,20 +1,15 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import type {
-  RouteIndexToTabOffsetMap,
-  RouteIndexToTabWidthMap,
-  TabBarProps,
-} from '../types/TabBar';
+import React, { useCallback, useMemo, useRef } from 'react';
+import type { TabBarProps } from '../types/TabBar';
 import { FlatList } from 'react-native-gesture-handler';
 import type { FlatListProps } from 'react-native';
 import type { Route } from '../types/common';
 import { View } from 'react-native';
 import TabBarItem from './TabBarItem';
 import { StyleSheet } from 'react-native';
-import type { LayoutChangeEvent } from 'react-native';
 import { useTabBarAutoScroll } from '../hooks/useTabBarAutoScroll';
 import TabIndicator from './TabIndicator';
-import { useHandleTabBarItemLayout } from '../hooks/useTabBarItemLayout';
 import { TAB_BAR_HEIGHT, TAB_BAR_PADDING_VERTICAL } from '../constants/tabBar';
+import Tab from './Tab';
 
 const TabBar = React.memo((props: TabBarProps) => {
   const {
@@ -26,6 +21,7 @@ const TabBar = React.memo((props: TabBarProps) => {
     animatedRouteIndex,
     activeColor,
     inactiveColor,
+    type = 'secondary',
     jumpTo,
     getLabelText,
     renderTabBarItem,
@@ -40,24 +36,8 @@ const TabBar = React.memo((props: TabBarProps) => {
 
   const flatListRef = useRef<FlatList>(null);
 
-  const routeIndexToTabWidthMapRef = useRef<RouteIndexToTabWidthMap>({});
-  const [routeIndexToTabOffsetMap, setRouteIndexToTabOffsetMap] =
-    useState<RouteIndexToTabOffsetMap>({});
-
   const { autoScrollToRouteIndex, handleScrollToIndexFailed } =
-    useTabBarAutoScroll(
-      flatListRef,
-      routeIndex,
-      routeIndexToTabWidthMapRef,
-      routeIndexToTabOffsetMap,
-      layout
-    );
-
-  const { handleTabBarItemLayout } = useHandleTabBarItemLayout(
-    routeIndexToTabWidthMapRef,
-    setRouteIndexToTabOffsetMap,
-    navigationState.routes.length
-  );
+    useTabBarAutoScroll(flatListRef, routeIndex, layout);
 
   const data: NonNullable<FlatListProps<Route>['data']> = useMemo(
     () => navigationState.routes,
@@ -70,16 +50,17 @@ const TabBar = React.memo((props: TabBarProps) => {
         const route = item;
         const scene = { route };
         const focused = index === navigationState.index;
-        const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-          handleTabBarItemLayout(index, nativeEvent.layout);
-        };
         const handlePressTab = () => {
           onTabPress?.(scene);
           autoScrollToRouteIndex(index);
         };
         if (renderTabBarItem) {
           return (
-            <View onLayout={onLayout} style={styles.tabBarItemContainer}>
+            <Tab
+              index={index}
+              noOfRoutes={navigationState.routes.length}
+              style={styles.tab}
+            >
               {renderTabBarItem({
                 index,
                 route,
@@ -94,12 +75,16 @@ const TabBar = React.memo((props: TabBarProps) => {
                 style: [styles.tabBarItem, tabBarItemStyle],
                 labelStyle,
               })}
-            </View>
+            </Tab>
           );
         }
         if (scrollEnabled) {
           return (
-            <View onLayout={onLayout} style={styles.tabBarItemContainer}>
+            <Tab
+              index={index}
+              noOfRoutes={navigationState.routes.length}
+              style={styles.tab}
+            >
               <TabBarItem
                 index={index}
                 route={route}
@@ -114,13 +99,17 @@ const TabBar = React.memo((props: TabBarProps) => {
                 style={[styles.tabBarItem, tabBarItemStyle]}
                 labelStyle={labelStyle}
               />
-            </View>
+            </Tab>
           );
         }
         const width = layout.width / navigationState.routes.length;
-        const _tabBarItemStyle = { width };
+        const _tabStyle = { width };
         return (
-          <View onLayout={onLayout} style={styles.tabBarItemContainer}>
+          <Tab
+            index={index}
+            noOfRoutes={navigationState.routes.length}
+            style={[styles.tab, _tabStyle]}
+          >
             <TabBarItem
               index={index}
               route={route}
@@ -132,10 +121,10 @@ const TabBar = React.memo((props: TabBarProps) => {
               jumpTo={jumpTo}
               onTabPress={handlePressTab}
               onTabLongPress={onTabLongPress}
-              style={[styles.tabBarItem, _tabBarItemStyle, tabBarItemStyle]}
+              style={[styles.tabBarItem, tabBarItemStyle]}
               labelStyle={labelStyle}
             />
-          </View>
+          </Tab>
         );
       },
       [
@@ -152,7 +141,6 @@ const TabBar = React.memo((props: TabBarProps) => {
         onTabLongPress,
         tabBarItemStyle,
         labelStyle,
-        handleTabBarItemLayout,
         onTabPress,
         autoScrollToRouteIndex,
       ]
@@ -161,21 +149,15 @@ const TabBar = React.memo((props: TabBarProps) => {
   const tabIndicatorComponent = useMemo(() => {
     return (
       <TabIndicator
+        type={type}
         animatedRouteIndex={animatedRouteIndex}
-        routeIndexToTabOffsetMap={routeIndexToTabOffsetMap}
         style={indicatorStyle}
       />
     );
-  }, [animatedRouteIndex, routeIndexToTabOffsetMap, indicatorStyle]);
+  }, [type, animatedRouteIndex, indicatorStyle]);
 
   return (
-    <View
-      style={[
-        styles.tabBarContainer,
-        scrollEnabled && styles.scrollableTabBarContainer,
-        style,
-      ]}
-    >
+    <View style={[styles.tabBarContainer, style]}>
       <FlatList
         ref={flatListRef}
         horizontal
@@ -197,17 +179,15 @@ export default TabBar;
 const styles = StyleSheet.create({
   tabBarContainer: {
     backgroundColor: '#25A0F6',
-  },
-  scrollableTabBarContainer: {
     height: TAB_BAR_HEIGHT,
   },
-  tabBarItemContainer: {
+  tab: {
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    paddingHorizontal: 10,
   },
   tabBarItem: {
-    paddingHorizontal: 10,
     paddingVertical: TAB_BAR_PADDING_VERTICAL,
   },
 });
