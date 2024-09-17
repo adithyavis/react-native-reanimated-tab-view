@@ -1,6 +1,6 @@
 # React Native Reanimated Tab View
 
-A Tab View component implemented using [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/). Almost entirely inter-compatible with [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view)
+A Tab View component implemented using [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/). Props are almost entirely inter-compatible with [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view)
 
 - The [example/](https://github.com/adithyavis/react-native-reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
 
@@ -33,15 +33,17 @@ Additionally, react-native-reanimated-tab-view also provides the following featu
 
 ## Motivation
 
-[`react-native-tab-view`](https://github.com/satya164/react-native-tab-view) is an amazing package,
-but the dependency on [`react-native-pager-view`](https://github.com/callstack/react-native-pager-view)
-complicates solving issues such as
+1.  [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view) is an amazing package,
+    but the dependency on [`react-native-pager-view`](https://github.com/callstack/react-native-pager-view)
+    complicates solving issues such as
 
 - [`TabView tab index not really controlled`](https://github.com/react-navigation/react-navigation/issues/11412)
 - [`Tab label aligning vertically in some devices when render single tab.`](https://github.com/react-navigation/react-navigation/issues/11083)
-- [`Screen getting stuck when switching between the tabs while keyboard opened.`](https://github.com/react-navigation/react-navigation/issues/11301)
+- [`Screen getting stuck when switching between the tabs while keyboard opened.`](https://github.com/react-navigation/react-navigation/issues/11301).
 
-The animation and gesture primitives offered by [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/) help in making swipe and jump behaviors of TabView more controllable.
+react-native-reanimated-tab-view depends purely on [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/), and hence the above issues won't be encountered.
+
+2.  The animation and gesture primitives offered by [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/) help in making swipe and jump behaviors of TabView more controllable.
 
 ## Installation
 
@@ -101,3 +103,19 @@ export default function TabViewExample() {
   );
 }
 ```
+
+| Name                | Description                                                 | Required | Type     | Default  |
+| ------------------- | ----------------------------------------------------------- | -------- | -------- | -------- |
+| navigationState     | The state of the navigation including the index and routes. | Yes      | Object   |          |
+| renderScene         | A function that renders the scene for a given route.        | Yes      | Function |          |
+| onIndexChange       | A function that is called when the index changes.           | Yes      | Function |          |
+| initialLayout       | The initial layout of the tab view.                         | No       | Object   | {}       |
+| sceneContainerStyle | The style for the scene container.                          | No       | Object   | {}       |
+| keyboardDismissMode | Specifies how to dismiss the keyboard.                      | No       | String   | 'none'   |
+| swipeEnabled        | Enables or disables swipe gestures.                         | No       | Boolean  | true     |
+| mode                | Specifies the layout mode of the tab view.                  | No       | String   | 'window' |
+| tabBarPosition      | Specifies the position of the tab bar.                      | No       | String   | 'top'    |
+| smoothJump          | Enables or disables smooth jumping between tabs.            | No       | Boolean  | true     |
+| renderTabBar        | A function that renders the tab bar.                        | No       | Function | () => {} |
+| onSwipeEnd          | A function that is called when a swipe gesture ends.        | No       | Function | () => {} |
+| onSwipeStart        | A function that is called when a swipe gesture starts.      | No       | Function | () => {} |
