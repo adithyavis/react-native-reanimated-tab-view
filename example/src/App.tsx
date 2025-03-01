@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import {
+  Button,
   Dimensions,
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -36,11 +36,21 @@ const initialTabViewLayout = {
   width: windowWidth - 50,
 };
 
-const Scene = ({ backgroundColor }: { backgroundColor: string }) => {
+const Scene = ({
+  backgroundColor,
+  text,
+}: {
+  backgroundColor: string;
+  text: string;
+}) => {
   // React.useEffect(() => {
   //   for (let i = 0; i < 100000000; i++) {}
   // }, []);
-  return <View style={[styles.scene, { backgroundColor }]} />;
+  return (
+    <View style={[styles.scene, { backgroundColor }]}>
+      <Text style={styles.sceneText}>{text}</Text>
+    </View>
+  );
 };
 
 export default function App() {
@@ -61,8 +71,8 @@ export default function App() {
   const [navigationState, setNavigationState] = React.useState<NavigationState>(
     {
       index: initialTabIndex,
-      routes: [...Array(20).keys()].map((i) => ({
-        key: `tab${i}`,
+      routes: [...Array(4).keys()].map((i) => ({
+        key: `${i}`,
         title: `Tab ${converter.toWords(i + 1)}`,
         color: randomColor(),
       })),
@@ -70,7 +80,12 @@ export default function App() {
   );
 
   const renderScene = React.useCallback(({ route }) => {
-    return <Scene backgroundColor={route.color} />;
+    return (
+      <Scene
+        backgroundColor={route.color}
+        text={`Scene ${converter.toWords(parseInt(route.key, 10) + 1)}`}
+      />
+    );
   }, []);
 
   const handleIndexChange = React.useCallback((index: number) => {
@@ -85,9 +100,7 @@ export default function App() {
             showReanimatedTabView ? 'ReanimatedTabView' : 'TabView'
           }`}
         </Text>
-        <TouchableOpacity onPress={toggleShowReanimatedTabView}>
-          <Text>TOGGLE</Text>
-        </TouchableOpacity>
+        <Button onPress={toggleShowReanimatedTabView} title="TOGGLE" />
         {showReanimatedTabView ? (
           <ReanimatedTabView
             onIndexChange={handleIndexChange}
@@ -127,5 +140,11 @@ const styles = StyleSheet.create({
   tabView: { flex: 1, width: windowWidth - 50 },
   scene: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sceneText: {
+    fontSize: 18,
+    marginBottom: 100,
   },
 });

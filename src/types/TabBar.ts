@@ -18,7 +18,7 @@ export type TabBarProps = Omit<ViewProps, 'children'> &
     bounces?: boolean;
     activeColor?: string;
     inactiveColor?: string;
-    type?: TabBarType;
+    tabBarType?: TabBarType;
     getLabelText?: (scene: Scene) => string | undefined;
     renderTabBarItem?: (props: TabBarItemProps) => React.ReactNode;
     onTabPress?: (scene: Scene) => void;

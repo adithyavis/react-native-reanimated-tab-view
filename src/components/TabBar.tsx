@@ -21,7 +21,7 @@ const TabBar = React.memo((props: TabBarProps) => {
     animatedRouteIndex,
     activeColor,
     inactiveColor,
-    type = 'secondary',
+    tabBarType = 'secondary',
     jumpTo,
     getLabelText,
     renderTabBarItem,
@@ -149,12 +149,12 @@ const TabBar = React.memo((props: TabBarProps) => {
   const tabIndicatorComponent = useMemo(() => {
     return (
       <TabIndicator
-        type={type}
+        tabBarType={tabBarType}
         animatedRouteIndex={animatedRouteIndex}
         style={indicatorStyle}
       />
     );
-  }, [type, animatedRouteIndex, indicatorStyle]);
+  }, [tabBarType, animatedRouteIndex, indicatorStyle]);
 
   return (
     <View style={[styles.tabBarContainer, style]}>
