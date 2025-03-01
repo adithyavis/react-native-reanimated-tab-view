@@ -22,14 +22,15 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
   renderTabBar?: (props: TabBarProps) => React.ReactNode;
   tabBarPosition?: 'top' | 'bottom';
+  tabBarScrollEnabled?: boolean;
   smoothJump?: boolean;
   initialLayout?: Partial<Layout>;
   sceneContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   keyboardDismissMode?: 'none' | 'on-drag' | 'auto';
   swipeEnabled?: boolean;
-  mode?: RenderMode;
-  type?: TabBarType;
+  renderMode?: RenderMode;
+  tabBarType?: TabBarType;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
 };

@@ -5,7 +5,7 @@ import type { TabIndicatorProps } from '../types/TabIndicator';
 import { useTabLayoutContext } from '../providers/TabLayout';
 
 const TabIndicator = React.memo((props: TabIndicatorProps) => {
-  const { type, animatedRouteIndex, style } = props;
+  const { tabBarType, animatedRouteIndex, style } = props;
 
   const {
     routeIndexToTabWidthMap,
@@ -18,14 +18,14 @@ const TabIndicator = React.memo((props: TabIndicatorProps) => {
     const animatedRouteIndexCeil = animatedRouteIndexFloor + 1;
 
     const translateXFloor =
-      type === 'primary'
+      tabBarType === 'primary'
         ? (routeIndexToTabOffsetMap.value[animatedRouteIndexFloor] ?? 0) +
           (routeIndexToTabWidthMap.value[animatedRouteIndexFloor] ?? 0) / 2 -
           (routeIndexToTabBarItemWidthMap.value[animatedRouteIndexFloor] ?? 0) /
             2
         : routeIndexToTabOffsetMap.value[animatedRouteIndexFloor] ?? 0;
     const translateXCeil =
-      type === 'primary'
+      tabBarType === 'primary'
         ? (routeIndexToTabOffsetMap.value[animatedRouteIndexCeil] ?? 0) +
           (routeIndexToTabWidthMap.value[animatedRouteIndexCeil] ?? 0) / 2 -
           (routeIndexToTabBarItemWidthMap.value[animatedRouteIndexCeil] ?? 0) /
@@ -38,18 +38,18 @@ const TabIndicator = React.memo((props: TabIndicatorProps) => {
         (1 - (animatedRouteIndexCeil - animatedRouteIndex.value));
 
     const widthFloor =
-      type === 'primary'
+      tabBarType === 'primary'
         ? routeIndexToTabBarItemWidthMap.value[animatedRouteIndexFloor] ?? 0
         : routeIndexToTabWidthMap.value[animatedRouteIndexFloor] ?? 0;
     const widthCeil =
-      type === 'primary'
+      tabBarType === 'primary'
         ? routeIndexToTabBarItemWidthMap.value[animatedRouteIndexFloor] ?? 0
         : routeIndexToTabWidthMap.value[animatedRouteIndexCeil] ?? 0;
     const width =
       widthFloor * (1 - (animatedRouteIndex.value - animatedRouteIndexFloor)) +
       widthCeil * (1 - (animatedRouteIndexCeil - animatedRouteIndex.value));
     return { transform: [{ translateX }], width };
-  }, [type]);
+  }, [tabBarType]);
 
   return (
     <Animated.View

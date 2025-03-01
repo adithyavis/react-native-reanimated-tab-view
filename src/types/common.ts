@@ -30,4 +30,4 @@ export type SceneRendererProps = {
 
 export type TabBarType = 'primary' | 'secondary';
 
-export type RenderMode = 'normal' | 'window' | 'lazy';
+export type RenderMode = 'all' | 'windowed' | 'lazy';

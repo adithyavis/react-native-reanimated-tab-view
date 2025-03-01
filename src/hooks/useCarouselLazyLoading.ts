@@ -7,7 +7,7 @@ import {
 } from 'react-native-reanimated';
 
 export const useCarouselLazyLoading = (
-  mode: RenderMode,
+  renderMode: RenderMode,
   initialRouteIndex: number,
   currentRouteIndexSharedValue: SharedValue<number>,
   smallestRouteIndexToRender: number,
@@ -44,18 +44,21 @@ export const useCarouselLazyLoading = (
     });
   }, []);
 
-  const isLazyLoadingEnabled = useMemo(() => mode === 'lazy', [mode]);
+  const isLazyLoadingEnabled = useMemo(
+    () => renderMode === 'lazy',
+    [renderMode]
+  );
 
   const computeShouldRenderRoute = useCallback(
     (index: number) => {
-      if (mode === 'window') {
+      if (renderMode === 'windowed') {
         return (
           (index >= smallestRouteIndexToRender &&
             index <= largestRouteIndexToRender) ||
           index === prevRouteIndex
         );
       }
-      if (mode === 'lazy') {
+      if (renderMode === 'lazy') {
         return lazyLoadedRouteIndices.includes(index);
       }
       return true;
@@ -63,7 +66,7 @@ export const useCarouselLazyLoading = (
     [
       largestRouteIndexToRender,
       lazyLoadedRouteIndices,
-      mode,
+      renderMode,
       prevRouteIndex,
       smallestRouteIndexToRender,
     ]

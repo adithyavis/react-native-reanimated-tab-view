@@ -31,7 +31,7 @@ const TabViewCarousel = React.memo(
       navigationState,
       renderScene,
       layout,
-      mode = 'window',
+      renderMode = 'windowed',
       onIndexChange,
       style,
       sceneContainerStyle,
@@ -104,7 +104,7 @@ const TabViewCarousel = React.memo(
 
     const { isLazyLoadingEnabled, handleSceneMount, computeShouldRenderRoute } =
       useCarouselLazyLoading(
-        mode,
+        renderMode,
         initialRouteIndex,
         currentRouteIndexSharedValue,
         smallestRouteIndexToRender,
