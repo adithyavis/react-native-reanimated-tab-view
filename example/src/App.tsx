@@ -9,8 +9,10 @@ import {
   View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { TabView as ReanimatedTabView } from 'react-native-reanimated-tab-view';
-import type { NavigationState } from '../../src/types/common';
+import {
+  TabView as ReanimatedTabView,
+  type NavigationState,
+} from 'reanimated-tab-view';
 import {
   TabView as TabView,
   TabBar as ReactNavigationTabBar,

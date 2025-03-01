@@ -1,7 +1,7 @@
 {
-  "name": "@adithyavis/reanimated-tab-view",
-  "version": "0.2.0",
-  "description": "Tab view component implemented using Reanimated 2",
+  "name": "reanimated-tab-view",
+  "version": "0.2.1",
+  "description": "Tab view component implemented using Reanimated 3",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -26,13 +26,13 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-reanimated-tab-view-example start",
+    "example": "yarn workspace reanimated-tab-view-example start",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "bob build",
-    "web-build": "yarn workspace react-native-reanimated-tab-view-example web-build",
+    "web-build": "yarn workspace reanimated-tab-view-example web-build",
     "release": "release-it"
   },
   "keywords": [
@@ -42,14 +42,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adithyavis/react-native-reanimated-tab-view.git"
+    "url": "git+https://github.com/adithyavis/reanimated-tab-view.git"
   },
   "author": "Adithya Viswa <adithyaviswam@gmail.com> (https://github.com/adithyavis)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/adithyavis/react-native-reanimated-tab-view/issues"
+    "url": "https://github.com/adithyavis/reanimated-tab-view/issues"
   },
-  "homepage": "https://github.com/adithyavis/react-native-reanimated-tab-view#readme",
+  "homepage": "https://github.com/adithyavis/reanimated-tab-view#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

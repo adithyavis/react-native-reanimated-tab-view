@@ -2,15 +2,15 @@
 
 A Tab View component implemented using [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/). Props are almost entirely inter-compatible with [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view)
 
-- The [example/](https://github.com/adithyavis/react-native-reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
+- The [example/](https://github.com/adithyavis/reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
 
 ## Demo
 
-<a href="https://github.com/adithyavis/react-native-reanimated-tab-view/raw/main/assets/assets_demo.mp4"><img src="https://github.com/adithyavis/react-native-reanimated-tab-view/raw/main/assets/assets_demo.gif" width="360"></a>
+<a href="https://github.com/adithyavis/reanimated-tab-view/raw/main/assets/assets_demo.mp4"><img src="https://github.com/adithyavis/reanimated-tab-view/raw/main/assets/assets_demo.gif" width="360"></a>
 
 ## Features
 
-react-native-reanimated-tab-view provides the following features that are provided by react-native-tab-view
+reanimated-tab-view provides the following features that are provided by react-native-tab-view
 
 > - Smooth animations and gestures
 > - Scrollable tabs
@@ -19,7 +19,7 @@ react-native-reanimated-tab-view provides the following features that are provid
 > - Highly customizable
 > - Fully typed with [TypeScript](https://typescriptlang.org)
 
-Additionally, react-native-reanimated-tab-view also provides the following features
+Additionally, reanimated-tab-view also provides the following features
 
 > - 3 modes to render the tab view ("normal", "window" and "lazy")
 > - Dynamic widths for tabs
@@ -41,7 +41,7 @@ Additionally, react-native-reanimated-tab-view also provides the following featu
 - [`Tab label aligning vertically in some devices when render single tab.`](https://github.com/react-navigation/react-navigation/issues/11083)
 - [`Screen getting stuck when switching between the tabs while keyboard opened.`](https://github.com/react-navigation/react-navigation/issues/11301).
 
-react-native-reanimated-tab-view depends purely on [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/), and hence the above issues won't be encountered.
+reanimated-tab-view depends purely on [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/), and hence the above issues won't be encountered.
 
 2.  The animation and gesture primitives offered by [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/) help in making swipe and jump behaviors of TabView more controllable.
 
@@ -55,7 +55,7 @@ Install react-native-reanimated (>=2.x) and react-native-gesture-handler (>=2.x)
 Open a Terminal in the project root and run:
 
 ```sh
-yarn add react-native-reanimated-tab-view
+yarn add reanimated-tab-view
 ```
 
 ## Quick Start
@@ -63,7 +63,7 @@ yarn add react-native-reanimated-tab-view
 ```js
 import * as React from 'react';
 import { View, useWindowDimensions } from 'react-native';
-import { TabView } from 'react-native-reanimated-tab-view';
+import { TabView } from 'reanimated-tab-view';
 
 const FirstRoute = () => (
   <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
