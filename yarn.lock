@@ -24,45 +24,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adithyavis/reanimated-tab-view@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@adithyavis/reanimated-tab-view@workspace:."
-  dependencies:
-    "@commitlint/config-conventional": ^17.0.2
-    "@evilmartians/lefthook": ^1.5.0
-    "@react-native-community/eslint-config": ^3.0.1
-    "@react-native/babel-preset": ^0.73.20
-    "@react-native/eslint-config": ^0.72.2
-    "@release-it/conventional-changelog": ^5.0.0
-    "@types/jest": ^28.1.2
-    "@types/react": ~17.0.21
-    "@types/react-native": 0.70.0
-    "@typescript-eslint/eslint-plugin": ^5.14.0
-    "@typescript-eslint/parser": ^5.14.0
-    commitlint: ^17.0.2
-    del-cli: ^5.0.0
-    eslint: ^8.4.1
-    eslint-config-prettier: ^8.5.0
-    eslint-import-resolver-typescript: ^2.5.0
-    eslint-plugin-prettier: ^4.0.0
-    jest: ^28.1.1
-    prettier: ^2.0.5
-    react: 18.2.0
-    react-native: 0.72.6
-    react-native-builder-bob: ^0.20.0
-    react-native-gesture-handler: ~2.12.0
-    react-native-pager-view: ^6.2.3
-    react-native-reanimated: ~3.3.0
-    release-it: ^15.0.0
-    typescript: ^5.0.2
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-gesture-handler: ">=2.9.0"
-    react-native-reanimated: ">=3.0.0"
-  languageName: unknown
-  linkType: soft
-
 "@ampproject/remapping@npm:^2.2.0":
   version: 2.2.1
   resolution: "@ampproject/remapping@npm:2.2.1"
@@ -14979,28 +14940,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated-tab-view-example@workspace:example":
-  version: 0.0.0-use.local
-  resolution: "react-native-reanimated-tab-view-example@workspace:example"
-  dependencies:
-    "@babel/core": ^7.20.0
-    "@expo/webpack-config": ^18.0.1
-    "@types/number-to-words": ^1.2.3
-    babel-loader: ^8.1.0
-    babel-plugin-module-resolver: ^5.0.0
-    expo: ~49.0.15
-    expo-status-bar: ~1.6.0
-    number-to-words: ^1.2.4
-    react: 18.2.0
-    react-dom: 18.2.0
-    react-native: 0.72.6
-    react-native-gesture-handler: ~2.12.0
-    react-native-reanimated: ~3.3.0
-    react-native-tab-view: ^3.5.2
-    react-native-web: ~0.19.6
-  languageName: unknown
-  linkType: soft
-
 "react-native-reanimated@npm:~3.3.0":
   version: 3.3.0
   resolution: "react-native-reanimated@npm:3.3.0"
@@ -15245,6 +15184,67 @@ __metadata:
   checksum: dfaf8e6ac20408ea00d650e95f7bb47f77c4c62dd12ed7fb51731ee84532a2f3675fcdc4cab4923dc1eef227520a2e082a093215190907758bea9f585b19438e
   languageName: node
   linkType: hard
+
+"reanimated-tab-view-example@workspace:example":
+  version: 0.0.0-use.local
+  resolution: "reanimated-tab-view-example@workspace:example"
+  dependencies:
+    "@babel/core": ^7.20.0
+    "@expo/webpack-config": ^18.0.1
+    "@types/number-to-words": ^1.2.3
+    babel-loader: ^8.1.0
+    babel-plugin-module-resolver: ^5.0.0
+    expo: ~49.0.15
+    expo-status-bar: ~1.6.0
+    number-to-words: ^1.2.4
+    react: 18.2.0
+    react-dom: 18.2.0
+    react-native: 0.72.6
+    react-native-gesture-handler: ~2.12.0
+    react-native-reanimated: ~3.3.0
+    react-native-tab-view: ^3.5.2
+    react-native-web: ~0.19.6
+  languageName: unknown
+  linkType: soft
+
+"reanimated-tab-view@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "reanimated-tab-view@workspace:."
+  dependencies:
+    "@commitlint/config-conventional": ^17.0.2
+    "@evilmartians/lefthook": ^1.5.0
+    "@react-native-community/eslint-config": ^3.0.1
+    "@react-native/babel-preset": ^0.73.20
+    "@react-native/eslint-config": ^0.72.2
+    "@release-it/conventional-changelog": ^5.0.0
+    "@types/jest": ^28.1.2
+    "@types/react": ~17.0.21
+    "@types/react-native": 0.70.0
+    "@typescript-eslint/eslint-plugin": ^5.14.0
+    "@typescript-eslint/parser": ^5.14.0
+    commitlint: ^17.0.2
+    del-cli: ^5.0.0
+    eslint: ^8.4.1
+    eslint-config-prettier: ^8.5.0
+    eslint-import-resolver-typescript: ^2.5.0
+    eslint-plugin-prettier: ^4.0.0
+    jest: ^28.1.1
+    prettier: ^2.0.5
+    react: 18.2.0
+    react-native: 0.72.6
+    react-native-builder-bob: ^0.20.0
+    react-native-gesture-handler: ~2.12.0
+    react-native-pager-view: ^6.2.3
+    react-native-reanimated: ~3.3.0
+    release-it: ^15.0.0
+    typescript: ^5.0.2
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.9.0"
+    react-native-reanimated: ">=3.0.0"
+  languageName: unknown
+  linkType: soft
 
 "recast@npm:^0.21.0":
   version: 0.21.5
