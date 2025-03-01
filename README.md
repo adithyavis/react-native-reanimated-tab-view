@@ -22,18 +22,25 @@ reanimated-tab-view provides the following features that are provided by react-n
 Additionally, reanimated-tab-view also provides the following features
 
 - 3 render modes to render the tab view ("all", "windowed" and "lazy"). Can be modified using the `renderMode` prop.
+
   - All render mode renders all the scenes in one go, during the initial tab view mount. When the number of scenes is large, it is recommended to use the window mode/lazy mode.
   - Windowed render mode renders a window of scenes, including the current scene and the scenes adjascent to it. This is the default render mode. It is recommended to use this render mode when the number of scenes is large but when the render cost of each scene is not high.
   - Lazy render mode renders the scenes one by one when they are first mounted to the view. It is recommended to use this render mode when the number of scenes is large and when the render cost of each scene is high.
+
 - Dynamic widths for tabs, based on the tab title length. For eg., if the tab title is "Tab one", the width of the tab will be smaller than if the tab title is "Tab hundred one".
+
   - This feature is in accordance with the Material Design spec.
   - This is disabled by default. To enable this, set the `tabBarScrollEnabled` prop to `true`, or set the `tabBarType` prop to `'primary'`.
+
     <img src="./assets/dynamic_tab_width.gif" width="360">
+
 - Customisable jump-to animations (smooth jump or scroll jump). Can be modified using the `smoothJump` prop.
+
   - Scroll jump: When jumped from tab one to tab four, the jump animation scrolls through the scenes in between (scenes of tab two and tab three). In case the scenes in between are not rendered (while using lazy/windowed render modes), the jump-to animation will result in a momentary blank splash.
   - Smooth jump: When jumped from tab one to tab four, the jump animation smoothly animates to the target scene of tab four without scrolling through the scenes in between. This helps prevent blank splashes when using lazy/windowed render modes. This is enabled by default.
-    | Smooth Jump | Scroll Jump |
-    |:----------:|:------------------:|
+
+    |                   Smooth Jump                    |                   Scroll Jump                    |
+    | :----------------------------------------------: | :----------------------------------------------: |
     | <img src="./assets/smooth_jump.gif" width="360"> | <img src="./assets/scroll_jump.gif" width="360"> |
 
 > #### Upcoming features
@@ -114,6 +121,8 @@ export default function TabViewExample() {
   );
 }
 ```
+
+## Props
 
 | Name                | Description                                                               | Required | Type                        | Default     |
 | ------------------- | ------------------------------------------------------------------------- | -------- | --------------------------- | ----------- |
